@@ -1,6 +1,6 @@
 package com.synccafe.icafe.contacs.domain.model.valueobjects;
 
-public enum Role_Employee {
+public enum RolesEmployee {
     LIMPIEZA,
     MESERO,
     BARISTA,
