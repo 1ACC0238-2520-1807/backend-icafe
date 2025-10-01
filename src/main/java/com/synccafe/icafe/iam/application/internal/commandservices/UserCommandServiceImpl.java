@@ -1,5 +1,6 @@
 package com.synccafe.icafe.iam.application.internal.commandservices;
 
+import com.synccafe.icafe.iam.application.internal.outboundservices.ExternalContactService;
 import com.synccafe.icafe.iam.application.internal.outboundservices.hashing.HashingService;
 import com.synccafe.icafe.iam.application.internal.outboundservices.tokens.TokenService;
 import com.synccafe.icafe.iam.domain.model.aggregates.User;
@@ -22,12 +23,14 @@ public class UserCommandServiceImpl implements UserCommandService {
     private final HashingService hashingService;
     private final TokenService tokenService;
     private final RoleRepository roleRepository;
+    private final ExternalContactService externalContactService;
 
-    public UserCommandServiceImpl(UserRepository userRepository, HashingService hashingService, TokenService tokenService, RoleRepository roleRepository) {
+    public UserCommandServiceImpl(UserRepository userRepository, HashingService hashingService, TokenService tokenService, RoleRepository roleRepository, ExternalContactService externalContactService) {
         this.userRepository = userRepository;
         this.hashingService = hashingService;
         this.tokenService = tokenService;
         this.roleRepository = roleRepository;
+        this.externalContactService = externalContactService;
     }
 
     @Override
@@ -47,6 +50,7 @@ public class UserCommandServiceImpl implements UserCommandService {
         }
         var user = new User(command.email(), hashingService.encode(command.password()), roles);
         userRepository.save(user);
+        externalContactService.CreateContactPortfolio(user.getId());
         return userRepository.findByEmail(command.email());
     }
 

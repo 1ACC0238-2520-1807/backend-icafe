@@ -23,8 +23,8 @@ public class OpenApiConfiguration {
                         .license(new License().name("Apache 2.0")
                                 .url("https://springdoc.org")))
                 .externalDocs(new ExternalDocumentation()
-                        .description("ACME Learning Platform wiki Documentation")
-                        .url("https://acme-learning-platform.wiki.github.io/docs"));
+                        .description("tf APP MOVIL")
+                        .url("https://github.com/1ACC0238-2520-1807/backend-icafe"));
         // Add security scheme
         final String securitySchemeName = "bearerAuth";
 

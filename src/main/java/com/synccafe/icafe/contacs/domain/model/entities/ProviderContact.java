@@ -3,7 +3,6 @@ package com.synccafe.icafe.contacs.domain.model.entities;
 import com.synccafe.icafe.contacs.domain.model.aggregates.ContactPortfolio;
 import com.synccafe.icafe.contacs.domain.model.commands.CreateProviderContactCommand;
 import com.synccafe.icafe.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
-import com.synccafe.icafe.shared.domain.model.entities.AuditableModel;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,6 +11,7 @@ import lombok.Setter;
 public class ProviderContact extends AuditableAbstractAggregateRoot<ProviderContact> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Getter
     private Long id;
     @Getter
     @Setter

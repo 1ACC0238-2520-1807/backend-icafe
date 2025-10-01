@@ -17,6 +17,7 @@ import java.util.Set;
 public class EmployeeContact extends AuditableAbstractAggregateRoot<EmployeeContact> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Getter
     private Long id;
     @Getter
     @Setter
