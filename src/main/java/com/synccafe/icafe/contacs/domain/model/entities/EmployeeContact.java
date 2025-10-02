@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
+@Getter
 public class EmployeeContact extends AuditableAbstractAggregateRoot<EmployeeContact> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -64,6 +65,11 @@ public class EmployeeContact extends AuditableAbstractAggregateRoot<EmployeeCont
     public Long getBranchId() {
         return branchId.branchId();
     }
+    //setBranchId
+    public void setBranchId(Long branchId) {
+        this.branchId = new BranchId(branchId);
+    }
+
 
     // Getters and Setters
     public void setPortfolio(ContactPortfolio portfolio) {

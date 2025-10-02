@@ -12,4 +12,5 @@ public interface ProviderContactRepository extends JpaRepository<ProviderContact
     Optional<ProviderContact> findByRuc(String ruc);
     boolean existsByEmail(String email);
     boolean existsByRuc(String ruc);
+    Optional<ProviderContact> findByIdAndPortfolioId(Long id, Long portfolioId);
 }

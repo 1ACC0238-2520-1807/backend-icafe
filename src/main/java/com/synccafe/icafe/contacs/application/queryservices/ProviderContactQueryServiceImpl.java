@@ -27,4 +27,9 @@ public class ProviderContactQueryServiceImpl implements ProviderContactQueryServ
     public Optional<ProviderContact> handle(GetProviderContactByIdQuery query) {
         return providerContactRepository.findById(query.id());
     }
+
+    @Override
+    public Optional<ProviderContact> findByPortfolioAndId(Long portfolioId, Long providerId) {
+        return providerContactRepository.findByIdAndPortfolioId(providerId, portfolioId);
+    }
 }

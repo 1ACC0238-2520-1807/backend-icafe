@@ -70,6 +70,8 @@ public class PortfolioCommandServiceImpl implements PortfolioCommandService {
         }
     }
 
+    //Provider
+
     @Override
     public ProviderContact updateProviderInPortfolio(Long portfolioId, Long providerId, UpdateProviderContactCommand command) {
         var portfolio = portfolioRepository.findById(portfolioId);
@@ -117,6 +119,54 @@ public class PortfolioCommandServiceImpl implements PortfolioCommandService {
         // Guardar cambios en el portfolio
         portfolioRepository.save(portfolioEntity);
 
+        return true;
+    }
+
+    //Employee
+    @Override
+    public EmployeeContact updateEmployeeInPortfolio(Long portfolioId, Long employeeId, CreateEmployeeContactCommand command) {
+        var portfolio = portfolioRepository.findById(portfolioId);
+        if (portfolio.isEmpty()) {
+            throw new IllegalArgumentException("Portfolio with ID " + portfolioId + " does not exist.");
+        }
+        var employeeOpt = employeeContactRepository.findById(employeeId);
+        if (employeeOpt.isEmpty()) {
+            throw new IllegalArgumentException("Employee with ID " + employeeId + " does not exist.");
+        }
+        var employee = employeeOpt.get();
+        if (!employee.getPortfolio().getId().equals(portfolioId)) {
+            throw new IllegalArgumentException("Employee with ID " + employeeId + " does not belong to Portfolio with ID " + portfolioId);
+        }
+        employee.setName(command.name());
+        employee.setEmail(command.email());
+        employee.setPhoneNumber(command.phoneNumber());
+        employee.setRole(command.role());
+        employee.setSalary(command.salary());
+        employee.setBranchId(command.branchId());
+        employeeContactRepository.save(employee);
+        return employee;
+        }
+
+    @Override
+    public boolean deleteEmployeeFromPortfolio(Long portfolioId, Long employeeId) {
+        var portfolio = portfolioRepository.findById(portfolioId);
+        if (portfolio.isEmpty()) {
+            throw new IllegalArgumentException("Portfolio with ID " + portfolioId + " does not exist.");
+        }
+        var portfolioEntity = portfolio.get();
+        // Buscar empleado dentro del portfolio
+        var employeeOpt = portfolioEntity.getEmployees().stream()
+                .filter(e -> e.getId().equals(employeeId))
+                .findFirst();
+        if (employeeOpt.isEmpty()) {
+            return false; // no existe ese empleado en este portfolio
+        }
+        var employee = employeeOpt.get();
+        // Eliminar relación y empleado
+        portfolioEntity.getEmployees().remove(employee);
+        employeeContactRepository.delete(employee);
+        // Guardar cambios en el portfolio
+        portfolioRepository.save(portfolioEntity);
         return true;
     }
 

@@ -14,7 +14,8 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-public class ContactPortfolio extends AuditableAbstractAggregateRoot<ContactPortfolio> {
+public class
+ContactPortfolio extends AuditableAbstractAggregateRoot<ContactPortfolio> {
     @Embedded
     private UserId userId;
 
@@ -37,6 +38,9 @@ public class ContactPortfolio extends AuditableAbstractAggregateRoot<ContactPort
     }
     public Set<ProviderContact> getProviders() {
         return providers;
+    }
+    public Set<EmployeeContact> getEmployees() {
+        return employees;
     }
 
     public void addEmployee(EmployeeContact employee) {

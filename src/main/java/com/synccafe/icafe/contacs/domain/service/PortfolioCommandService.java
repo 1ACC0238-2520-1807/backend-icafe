@@ -17,4 +17,8 @@ public interface PortfolioCommandService {
     //Provider
     ProviderContact updateProviderInPortfolio(Long portfolioId, Long providerId, UpdateProviderContactCommand command);
     boolean deleteProviderFromPortfolio(Long portfolioId, Long providerId);
+
+    //Employee
+    EmployeeContact updateEmployeeInPortfolio(Long portfolioId, Long employeeId, CreateEmployeeContactCommand command);
+    boolean deleteEmployeeFromPortfolio(Long portfolioId, Long employeeId);
 }

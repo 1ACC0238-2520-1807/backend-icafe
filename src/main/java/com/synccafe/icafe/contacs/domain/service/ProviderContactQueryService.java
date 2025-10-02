@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface ProviderContactQueryService {
     List<ProviderContact> handle(GetAllProviderContactQuery query);
     Optional<ProviderContact> handle(GetProviderContactByIdQuery query);
+
+    Optional<ProviderContact> findByPortfolioAndId(Long portfolioId, Long providerId);
 }
