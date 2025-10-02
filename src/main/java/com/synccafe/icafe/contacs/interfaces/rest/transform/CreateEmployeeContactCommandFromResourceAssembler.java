@@ -9,7 +9,8 @@ public class CreateEmployeeContactCommandFromResourceAssembler {
                 resource.name(),
                 resource.email(),
                 resource.phoneNumber(),
-                resource.roles(),
+                resource.role(),
+                resource.salary(),
                 resource.branchId()
         );
     }

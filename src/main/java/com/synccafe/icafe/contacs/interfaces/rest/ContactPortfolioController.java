@@ -1,10 +1,14 @@
 package com.synccafe.icafe.contacs.interfaces.rest;
 
 import com.synccafe.icafe.contacs.domain.service.PortfolioCommandService;
+import com.synccafe.icafe.contacs.interfaces.rest.resources.CreateEmployeeContactResource;
 import com.synccafe.icafe.contacs.interfaces.rest.resources.CreateProviderContactResource;
+import com.synccafe.icafe.contacs.interfaces.rest.resources.EmployeeContactResource;
 import com.synccafe.icafe.contacs.interfaces.rest.resources.ProviderContactResource;
+import com.synccafe.icafe.contacs.interfaces.rest.transform.CreateEmployeeContactCommandFromResourceAssembler;
 import com.synccafe.icafe.contacs.interfaces.rest.resources.UpdateProviderContactResource;
 import com.synccafe.icafe.contacs.interfaces.rest.transform.CreateProviderContactCommandFromResourceAssembler;
+import com.synccafe.icafe.contacs.interfaces.rest.transform.EmployeeContactResourceFromEntityAssembler;
 import com.synccafe.icafe.contacs.interfaces.rest.transform.ProviderContactResourceFromEntityAssembler;
 import com.synccafe.icafe.contacs.interfaces.rest.transform.UpdateProviderContactCommandFromResourceAssembler;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -33,6 +37,19 @@ public class ContactPortfolioController {
         }
         var providerContactResource = ProviderContactResourceFromEntityAssembler.toResourceFromEntity(providerContact);// Implementation for creating a provider contact
         return new ResponseEntity<>(providerContactResource, HttpStatus.CREATED);
+    }
+
+    //Agregar un empleado
+    @PostMapping("/{portfolioId}/employees")
+    public ResponseEntity<EmployeeContactResource> addEmployeeToPortfolio(@PathVariable Long portfolioId,
+                                                                          @RequestBody CreateEmployeeContactResource resource) {
+        var createEmployeeContactCommand= CreateEmployeeContactCommandFromResourceAssembler.toCommandFromResource(resource);
+        var employeeContact = portfolioCommandService.addEmployeeToPortfolio(portfolioId, createEmployeeContactCommand);
+        if(employeeContact==null) {
+            return ResponseEntity.badRequest().build();
+        }
+        var employeeContactResource = EmployeeContactResourceFromEntityAssembler.toResourceFromEntity(employeeContact);// Implementation for creating an employee contact
+        return new ResponseEntity<>(employeeContactResource, HttpStatus.CREATED);
     }
 
     // Actualizar datos de un proveedor

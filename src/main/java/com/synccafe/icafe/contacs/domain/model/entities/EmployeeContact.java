@@ -4,14 +4,9 @@ import com.synccafe.icafe.contacs.domain.model.aggregates.ContactPortfolio;
 import com.synccafe.icafe.contacs.domain.model.commands.CreateEmployeeContactCommand;
 import com.synccafe.icafe.contacs.domain.model.valueobjects.BranchId;
 import com.synccafe.icafe.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
-import com.synccafe.icafe.shared.domain.model.entities.AuditableModel;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Entity
 public class EmployeeContact extends AuditableAbstractAggregateRoot<EmployeeContact> {
@@ -28,6 +23,13 @@ public class EmployeeContact extends AuditableAbstractAggregateRoot<EmployeeCont
     @Getter
     @Setter
     private String phoneNumber;
+    @Getter
+    @Setter
+    private String role;
+
+    @Getter
+    @Setter
+    private String salary;
 
     @ManyToOne
     @JoinColumn(name = "portfolio_id")
@@ -37,43 +39,34 @@ public class EmployeeContact extends AuditableAbstractAggregateRoot<EmployeeCont
     private BranchId branchId;
 
     protected EmployeeContact() {
-        this.roles = new HashSet<>();
     }
 
-    public EmployeeContact(String name, String email, String phoneNumber, Long branchId) {
+    public EmployeeContact(String name, String email, String phoneNumber,String role,String salary, Long branchId) {
         this();
         this.name = name;
         this.email = email;
         this.phoneNumber = phoneNumber;
+        this.role = role;
+        this.salary = salary;
         this.branchId = new BranchId(branchId);
-        this.roles = new HashSet<>();
     }
 
     public EmployeeContact(CreateEmployeeContactCommand command) {
         this.name = command.name();
         this.email = command.email();
         this.phoneNumber = command.phoneNumber();
-        this.roles = new HashSet<>();
+        this.role = command.role();
+        this.salary = command.salary();
         this.branchId = new BranchId(command.branchId());
     }
 
 
-    public EmployeeContact(String name, String email, String phoneNumber, Long branchId, List<RoleEmployee> roles) {
-        this(name, email, phoneNumber, branchId);
-        addRoles(roles);
-    }
-
-    public EmployeeContact addRole(RoleEmployee role) {
-        this.roles.add(role);
-        return this;
-    }
-
-    public EmployeeContact addRoles(List<RoleEmployee> roles) {
-        this.roles.addAll(roles);
-        return this;
-    }
-
     public Long getBranchId() {
         return branchId.branchId();
+    }
+
+    // Getters and Setters
+    public void setPortfolio(ContactPortfolio portfolio) {
+        this.portfolio = portfolio;
     }
 }

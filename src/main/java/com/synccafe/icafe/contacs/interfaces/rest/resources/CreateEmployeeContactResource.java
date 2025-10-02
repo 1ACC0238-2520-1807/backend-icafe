@@ -6,7 +6,8 @@ public record CreateEmployeeContactResource(
         String name,
         String email,
         String phoneNumber,
-        List<String> roles,
+        String role,
+        String salary,
         Long branchId
 ) {
 }
