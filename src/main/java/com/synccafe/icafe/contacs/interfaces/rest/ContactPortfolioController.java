@@ -69,5 +69,20 @@ public class ContactPortfolioController {
         var providerResource = ProviderContactResourceFromEntityAssembler.toResourceFromEntity(updatedProvider);
         return ResponseEntity.ok(providerResource);
     }
+    // Eliminar un proveedor
+    @DeleteMapping("/{portfolioId}/providers/{providerId}")
+    public ResponseEntity<Void> deleteProviderFromPortfolio(
+            @PathVariable Long portfolioId,
+            @PathVariable Long providerId) {
+
+        boolean deleted = portfolioCommandService.deleteProviderFromPortfolio(portfolioId, providerId);
+
+        if (!deleted) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.noContent().build();
+    }
+
 
 }
