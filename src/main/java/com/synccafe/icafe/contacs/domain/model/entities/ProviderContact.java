@@ -47,5 +47,9 @@ public class ProviderContact extends AuditableAbstractAggregateRoot<ProviderCont
         this.phoneNumber = command.phoneNumber();
         this.ruc = command.ruc();
     }
+    // Getters and Setters
+    public void setPortfolio(ContactPortfolio portfolio) {
+        this.portfolio = portfolio;
+    }
 
 }
