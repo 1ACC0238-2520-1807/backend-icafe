@@ -10,6 +10,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -33,6 +34,9 @@ public class ContactPortfolio extends AuditableAbstractAggregateRoot<ContactPort
     public ContactPortfolio(UserId userId) {
         this();
         this.userId = userId;
+    }
+    public Set<ProviderContact> getProviders() {
+        return providers;
     }
 
     public void addEmployee(EmployeeContact employee) {

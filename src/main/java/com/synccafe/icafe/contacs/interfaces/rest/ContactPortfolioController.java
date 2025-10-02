@@ -3,8 +3,10 @@ package com.synccafe.icafe.contacs.interfaces.rest;
 import com.synccafe.icafe.contacs.domain.service.PortfolioCommandService;
 import com.synccafe.icafe.contacs.interfaces.rest.resources.CreateProviderContactResource;
 import com.synccafe.icafe.contacs.interfaces.rest.resources.ProviderContactResource;
+import com.synccafe.icafe.contacs.interfaces.rest.resources.UpdateProviderContactResource;
 import com.synccafe.icafe.contacs.interfaces.rest.transform.CreateProviderContactCommandFromResourceAssembler;
 import com.synccafe.icafe.contacs.interfaces.rest.transform.ProviderContactResourceFromEntityAssembler;
+import com.synccafe.icafe.contacs.interfaces.rest.transform.UpdateProviderContactCommandFromResourceAssembler;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,4 +34,23 @@ public class ContactPortfolioController {
         var providerContactResource = ProviderContactResourceFromEntityAssembler.toResourceFromEntity(providerContact);// Implementation for creating a provider contact
         return new ResponseEntity<>(providerContactResource, HttpStatus.CREATED);
     }
+
+    // Actualizar datos de un proveedor
+    @PutMapping("/{portfolioId}/providers/{providerId}")
+    public ResponseEntity<ProviderContactResource> updateProviderInPortfolio(
+            @PathVariable Long portfolioId,
+            @PathVariable Long providerId,
+            @RequestBody UpdateProviderContactResource resource) {
+
+        var updateProviderContactCommand = UpdateProviderContactCommandFromResourceAssembler.toCommandFromResource(resource);
+        var updatedProvider = portfolioCommandService.updateProviderInPortfolio(portfolioId, providerId, updateProviderContactCommand);
+
+        if (updatedProvider == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        var providerResource = ProviderContactResourceFromEntityAssembler.toResourceFromEntity(updatedProvider);
+        return ResponseEntity.ok(providerResource);
+    }
+
 }

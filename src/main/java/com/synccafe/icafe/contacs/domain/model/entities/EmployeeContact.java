@@ -28,12 +28,6 @@ public class EmployeeContact extends AuditableAbstractAggregateRoot<EmployeeCont
     @Getter
     @Setter
     private String phoneNumber;
-    @Getter
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name = "employee_roles",
-            joinColumns = @JoinColumn(name = "employee_id"),
-            inverseJoinColumns = @JoinColumn(name = "roleemployee_id"))
-    private Set<RoleEmployee> roles;
 
     @ManyToOne
     @JoinColumn(name = "portfolio_id")

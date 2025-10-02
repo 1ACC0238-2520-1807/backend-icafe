@@ -2,12 +2,9 @@ package com.synccafe.icafe.contacs.application.commadservices;
 
 import com.synccafe.icafe.contacs.domain.model.commands.CreateEmployeeContactCommand;
 import com.synccafe.icafe.contacs.domain.model.entities.EmployeeContact;
-import com.synccafe.icafe.contacs.domain.model.entities.RoleEmployee;
-import com.synccafe.icafe.contacs.domain.model.valueobjects.RolesEmployee;
 import com.synccafe.icafe.contacs.domain.service.EmployeeContactCommandService;
 import com.synccafe.icafe.contacs.infrastructure.persistence.jpa.repositories.EmployeeContactRepository;
 
-import com.synccafe.icafe.contacs.infrastructure.persistence.jpa.repositories.RoleEmployeeRespository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
+@Getter
 public class ProviderContact extends AuditableAbstractAggregateRoot<ProviderContact> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
