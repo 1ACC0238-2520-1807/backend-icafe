@@ -43,9 +43,9 @@ public record CreateProductResource(
             @Positive(message = "Item ID must be positive")
             Long itemId,
 
-            @NotNull(message = "Quantity is required")
-            @Positive(message = "Quantity must be positive")
-            Double quantity
+            @NotNull(message = "Portion factor is required")
+            @Positive(message = "Portion factor must be positive")
+            Double portionFactor
     ) {}
 
     public record RecipeItemResource(
@@ -53,8 +53,8 @@ public record CreateProductResource(
             @Positive(message = "Item ID must be positive")
             Long itemId,
 
-            @NotNull(message = "Quantity is required")
-            @Positive(message = "Quantity must be positive")
-            Double quantity
+            @NotNull(message = "Quantity per portion is required")
+            @Positive(message = "Quantity per portion must be positive")
+            Double qtyPerPortion
     ) {}
 }

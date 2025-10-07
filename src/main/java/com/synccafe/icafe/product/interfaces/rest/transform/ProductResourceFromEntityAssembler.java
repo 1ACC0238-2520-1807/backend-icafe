@@ -13,7 +13,7 @@ public class ProductResourceFromEntityAssembler {
         if (product.getDirectItem() != null) {
             directItem = new ProductResource.DirectItemSpecResource(
                     product.getDirectItem().itemId(),
-                    product.getDirectItem().quantity()
+                    product.getDirectItem().portionFactor()
             );
         }
 
@@ -22,15 +22,15 @@ public class ProductResourceFromEntityAssembler {
             components = product.getComponents().stream()
                     .map(item -> new ProductResource.RecipeItemResource(
                             item.itemId(),
-                            item.quantity()
+                            item.qtyPerPortion()
                     ))
                     .collect(Collectors.toList());
         }
 
         return new ProductResource(
                 product.getId(),
-                product.getOwnerId().value(),
-                product.getBranchId().value(),
+                product.getOwnerId().ownerId(),
+                product.getBranchId().branchId(),
                 product.getName(),
                 product.getCategory(),
                 product.getType(),

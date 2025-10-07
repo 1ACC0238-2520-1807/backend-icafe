@@ -122,18 +122,26 @@ public class ProductController {
             @PathVariable Long productId,
             @Valid @RequestBody UpdateProductResource resource) {
         
-        UpdateProductCommand command = UpdateProductCommandFromResourceAssembler
-                .toCommandFromResource(productId, resource);
-        
-        Optional<Product> updatedProduct = productCommandService.handle(command);
-        
-        if (updatedProduct.isPresent()) {
-            ProductResource productResource = ProductResourceFromEntityAssembler
-                    .toResourceFromEntity(updatedProduct.get());
-            return ResponseEntity.ok(productResource);
+        try {
+            UpdateProductCommand command = UpdateProductCommandFromResourceAssembler
+                    .toCommandFromResource(productId, resource);
+            
+            productCommandService.handle(command);
+            
+            // Query the updated product
+            GetProductByIdQuery query = new GetProductByIdQuery(productId);
+            Optional<Product> updatedProduct = productQueryService.handle(query);
+            
+            if (updatedProduct.isPresent()) {
+                ProductResource productResource = ProductResourceFromEntityAssembler
+                        .toResourceFromEntity(updatedProduct.get());
+                return ResponseEntity.ok(productResource);
+            }
+            
+            return ResponseEntity.notFound().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
         }
-        
-        return ResponseEntity.notFound().build();
     }
 
     @PatchMapping("/{productId}/archive")
@@ -146,16 +154,24 @@ public class ProductController {
             @Parameter(description = "Product ID", required = true)
             @PathVariable Long productId) {
         
-        ArchiveProductCommand command = new ArchiveProductCommand(productId);
-        Optional<Product> archivedProduct = productCommandService.handle(command);
-        
-        if (archivedProduct.isPresent()) {
-            ProductResource productResource = ProductResourceFromEntityAssembler
-                    .toResourceFromEntity(archivedProduct.get());
-            return ResponseEntity.ok(productResource);
+        try {
+            ArchiveProductCommand command = new ArchiveProductCommand(productId);
+            productCommandService.handle(command);
+            
+            // Query the archived product
+            GetProductByIdQuery query = new GetProductByIdQuery(productId);
+            Optional<Product> archivedProduct = productQueryService.handle(query);
+            
+            if (archivedProduct.isPresent()) {
+                ProductResource productResource = ProductResourceFromEntityAssembler
+                        .toResourceFromEntity(archivedProduct.get());
+                return ResponseEntity.ok(productResource);
+            }
+            
+            return ResponseEntity.notFound().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
         }
-        
-        return ResponseEntity.notFound().build();
     }
 
     @PatchMapping("/{productId}/activate")
@@ -168,16 +184,24 @@ public class ProductController {
             @Parameter(description = "Product ID", required = true)
             @PathVariable Long productId) {
         
-        ActivateProductCommand command = new ActivateProductCommand(productId);
-        Optional<Product> activatedProduct = productCommandService.handle(command);
-        
-        if (activatedProduct.isPresent()) {
-            ProductResource productResource = ProductResourceFromEntityAssembler
-                    .toResourceFromEntity(activatedProduct.get());
-            return ResponseEntity.ok(productResource);
+        try {
+            ActivateProductCommand command = new ActivateProductCommand(productId);
+            productCommandService.handle(command);
+            
+            // Query the activated product
+            GetProductByIdQuery query = new GetProductByIdQuery(productId);
+            Optional<Product> activatedProduct = productQueryService.handle(query);
+            
+            if (activatedProduct.isPresent()) {
+                ProductResource productResource = ProductResourceFromEntityAssembler
+                        .toResourceFromEntity(activatedProduct.get());
+                return ResponseEntity.ok(productResource);
+            }
+            
+            return ResponseEntity.notFound().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
         }
-        
-        return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{productId}")
@@ -190,13 +214,12 @@ public class ProductController {
             @Parameter(description = "Product ID", required = true)
             @PathVariable Long productId) {
         
-        DeleteProductCommand command = new DeleteProductCommand(productId);
-        boolean deleted = productCommandService.handle(command);
-        
-        if (deleted) {
+        try {
+            DeleteProductCommand command = new DeleteProductCommand(productId);
+            productCommandService.handle(command);
             return ResponseEntity.noContent().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
         }
-        
-        return ResponseEntity.notFound().build();
     }
 }

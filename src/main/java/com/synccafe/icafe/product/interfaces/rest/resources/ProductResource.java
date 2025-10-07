@@ -3,7 +3,7 @@ package com.synccafe.icafe.product.interfaces.rest.resources;
 import com.synccafe.icafe.product.domain.model.valueobjects.ProductStatus;
 import com.synccafe.icafe.product.domain.model.valueobjects.ProductType;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 public record ProductResource(
@@ -18,17 +18,17 @@ public record ProductResource(
         String steps,
         DirectItemSpecResource directItem,
         List<RecipeItemResource> components,
-        LocalDateTime createdAt,
-        LocalDateTime updatedAt,
-        Long version
+        Date createdAt,
+        Date updatedAt,
+        Integer version
 ) {
     public record DirectItemSpecResource(
             Long itemId,
-            Double quantity
+            Double portionFactor
     ) {}
 
     public record RecipeItemResource(
             Long itemId,
-            Double quantity
+            Double qtyPerPortion
     ) {}
 }
