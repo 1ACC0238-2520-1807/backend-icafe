@@ -16,7 +16,7 @@ public interface SupplyItemRepository extends JpaRepository<SupplyItem, Long> {
     
     Optional<SupplyItem> findByNombre(String nombre);
     
-    @Query("SELECT s FROM SupplyItem s WHERE s.currentQuantity.value <= s.reorderPoint.value")
+    @Query("SELECT s FROM SupplyItem s WHERE s.cantidadActual.valor <= s.puntoDeReorden.cantidadMinima")
     List<SupplyItem> findLowStockItems();
     
     @Query("SELECT s FROM SupplyItem s WHERE s.supplyManagement.id = :supplyManagementId")

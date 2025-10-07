@@ -13,15 +13,15 @@ import java.util.List;
 @Repository
 public interface InventoryTransactionRepository extends JpaRepository<InventoryTransaction, Long> {
     
-    List<InventoryTransaction> findByTransactionType(TransactionType transactionType);
+    List<InventoryTransaction> findByTipoMovimiento(TransactionType tipoMovimiento);
     
-    @Query("SELECT it FROM InventoryTransaction it WHERE it.supplyManagement.id = :supplyManagementId ORDER BY it.transactionDate DESC")
+    @Query("SELECT it FROM InventoryTransaction it WHERE it.supplyManagement.id = :supplyManagementId ORDER BY it.fecha DESC")
     List<InventoryTransaction> findBySupplyManagementIdOrderByDateDesc(@Param("supplyManagementId") Long supplyManagementId);
     
-    @Query("SELECT it FROM InventoryTransaction it WHERE it.transactionDate BETWEEN :startDate AND :endDate ORDER BY it.transactionDate DESC")
+    @Query("SELECT it FROM InventoryTransaction it WHERE it.fecha BETWEEN :startDate AND :endDate ORDER BY it.fecha DESC")
     List<InventoryTransaction> findByDateRangeOrderByDateDesc(@Param("startDate") LocalDateTime startDate, 
                                                              @Param("endDate") LocalDateTime endDate);
     
-    @Query("SELECT it FROM InventoryTransaction it WHERE it.reference LIKE %:reference%")
+    @Query("SELECT it FROM InventoryTransaction it WHERE it.referencia LIKE %:reference%")
     List<InventoryTransaction> findByReferenceContaining(@Param("reference") String reference);
 }

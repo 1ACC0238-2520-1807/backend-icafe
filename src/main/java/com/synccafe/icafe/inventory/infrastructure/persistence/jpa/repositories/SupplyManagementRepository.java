@@ -11,13 +11,13 @@ import java.util.Optional;
 @Repository
 public interface SupplyManagementRepository extends JpaRepository<SupplyManagement, Long> {
     
-    Optional<SupplyManagement> findByNombre(String nombre);
+    Optional<SupplyManagement> findByName(String name);
     
-    boolean existsByNombre(String nombre);
+    boolean existsByName(String name);
     
     @Query("SELECT sm FROM SupplyManagement sm JOIN FETCH sm.supplyItems")
     List<SupplyManagement> findAllWithSupplyItems();
     
-    @Query("SELECT sm FROM SupplyManagement sm JOIN FETCH sm.inventoryTransactions")
+    @Query("SELECT sm FROM SupplyManagement sm JOIN FETCH sm.transactions")
     List<SupplyManagement> findAllWithTransactions();
 }
