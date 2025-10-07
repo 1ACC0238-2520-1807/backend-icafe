@@ -1,0 +1,34 @@
+package com.synccafe.icafe.product.interfaces.rest.resources;
+
+import com.synccafe.icafe.product.domain.model.valueobjects.ProductStatus;
+import com.synccafe.icafe.product.domain.model.valueobjects.ProductType;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+public record ProductResource(
+        Long id,
+        Long ownerId,
+        Long branchId,
+        String name,
+        String category,
+        ProductType type,
+        ProductStatus status,
+        Integer portions,
+        String steps,
+        DirectItemSpecResource directItem,
+        List<RecipeItemResource> components,
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt,
+        Long version
+) {
+    public record DirectItemSpecResource(
+            Long itemId,
+            Double quantity
+    ) {}
+
+    public record RecipeItemResource(
+            Long itemId,
+            Double quantity
+    ) {}
+}
