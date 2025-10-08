@@ -5,13 +5,13 @@ import com.synccafe.icafe.contacs.interfaces.rest.resources.EmployeeContactResou
 
 public class EmployeeContactResourceFromEntityAssembler {
     public static EmployeeContactResource toResourceFromEntity(EmployeeContact entity){
-        var roles = entity.getRoles().stream().map(role -> role.getStringName()).toList();
         return new EmployeeContactResource(
                 entity.getId(),
                 entity.getName(),
                 entity.getEmail(),
                 entity.getPhoneNumber(),
-                roles,
+                entity.getRole(),
+                entity.getSalary(),
                 entity.getBranchId());
     }
 }

@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
+@Getter
 public class ProviderContact extends AuditableAbstractAggregateRoot<ProviderContact> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,6 +47,10 @@ public class ProviderContact extends AuditableAbstractAggregateRoot<ProviderCont
         this.email = command.email();
         this.phoneNumber = command.phoneNumber();
         this.ruc = command.ruc();
+    }
+    // Getters and Setters
+    public void setPortfolio(ContactPortfolio portfolio) {
+        this.portfolio = portfolio;
     }
 
 }

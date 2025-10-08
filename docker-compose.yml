@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  icafe-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: icafe-backend
+    ports:
+      - "8080:8080"
+    environment:
+      # Variables de entorno para la aplicación
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://ep-frosty-smoke-adldjvwu-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+      - SPRING_DATASOURCE_USERNAME=neondb_owner
+      - SPRING_DATASOURCE_PASSWORD=npg_ZqTS0WyAx5fO
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_SHOW_SQL=false
+      - AUTHORIZATION_JWT_SECRET=WriteHereYourSecretStringForTokenSigningCredentials
+      - AUTHORIZATION_JWT_EXPIRATION_DAYS=7
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - icafe-network
+
+networks:
+  icafe-network:
+    driver: bridge

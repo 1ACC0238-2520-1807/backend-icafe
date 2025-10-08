@@ -1,6 +1,7 @@
 package com.synccafe.icafe.contacs.application.commadservices;
 
 import com.synccafe.icafe.contacs.domain.model.commands.CreateProviderContactCommand;
+import com.synccafe.icafe.contacs.domain.model.commands.UpdateProviderContactCommand;
 import com.synccafe.icafe.contacs.domain.model.entities.ProviderContact;
 import com.synccafe.icafe.contacs.domain.service.ProviderContactCommandService;
 import com.synccafe.icafe.contacs.infrastructure.persistence.jpa.repositories.ProviderContactRepository;
@@ -30,5 +31,10 @@ public class ProviderContactCommandServiceImpl implements ProviderContactCommand
         providerContactRepository.save(providerContact);
         return Optional.of(providerContact);
 
+    }
+
+    @Override
+    public Optional<ProviderContact> handle(UpdateProviderContactCommand command) {
+        return Optional.empty();
     }
 }
