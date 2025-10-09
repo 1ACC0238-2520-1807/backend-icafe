@@ -12,21 +12,16 @@ import java.util.stream.Collectors;
 public class UpdateProductCommandFromResourceAssembler {
 
     public static UpdateProductCommand toCommandFromResource(Long productId, UpdateProductResource resource) {
-        DirectItemSpec directItem = null;
-        if (resource.directItem() != null) {
-            directItem = new DirectItemSpec(
-                    resource.directItem().itemId(),
-                    resource.directItem().quantity(),
-                    UnitType.UNITS  // Default unit type
-            );
-        }
+        DirectItemSpec directItem = resource.directItem() != null ?
+                new DirectItemSpec(
+                        resource.directItem().itemId(),
+                        resource.directItem().portionFactor(),
+                        UnitType.UNITS) : null;
 
-        List<RecipeItem> components = null;
-        if (resource.components() != null) {
-            components = resource.components().stream()
-                    .map(item -> new RecipeItem(item.itemId(), item.quantity(), UnitType.UNITS))
-                    .collect(Collectors.toList());
-        }
+        List<RecipeItem> components = resource.components() != null ?
+                resource.components().stream()
+                        .map(item -> new RecipeItem(item.itemId(), item.qtyPerPortion(), item.unit()))
+                        .toList() : null;
 
         return new UpdateProductCommand(
                 productId,

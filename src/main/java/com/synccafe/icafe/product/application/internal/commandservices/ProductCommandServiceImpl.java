@@ -56,7 +56,10 @@ public class ProductCommandServiceImpl implements ProductCommandService {
             }
         }
 
-        // Validate business rules
+        // Validate invariants after setting directItem/components
+        product.validateInvariants();
+
+        // Validate business rules after setting directItem/components
         productPolicy.validateProductCreation(product, inventoryACLService, 
             new ProductPolicyRepositoryAdapter(productRepository));
 
