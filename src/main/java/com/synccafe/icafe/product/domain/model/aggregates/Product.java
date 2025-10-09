@@ -78,7 +78,8 @@ public class Product extends AuditableAbstractAggregateRoot<Product> {
         this.version = 1;
         this.status = ProductStatus.ACTIVE;
         
-        validateInvariants();
+        // Note: validateInvariants() will be called after setting directItem/components
+        // in ProductCommandServiceImpl to ensure proper validation
         
         // Emit domain event
         registerEvent(new ProductCreated(
@@ -246,7 +247,7 @@ public class Product extends AuditableAbstractAggregateRoot<Product> {
         this.version++;
     }
 
-    private void validateInvariants() {
+    public void validateInvariants() {
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException("El nombre del producto no puede estar vacío");
         }

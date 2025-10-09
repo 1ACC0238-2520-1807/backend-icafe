@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @OpenAPIDefinition(
    servers = {
-     @Server(url = "http://localhost:8383", description = "LOCAL"),
+     @Server(url = "http://localhost:8080", description = "LOCAL"),
      @Server(url = "https://w3rl-logics.tech", description = "PRODUCTION")
    }
 )
