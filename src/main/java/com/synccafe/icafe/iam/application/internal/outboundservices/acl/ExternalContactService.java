@@ -1,4 +1,4 @@
-package com.synccafe.icafe.iam.application.internal.outboundservices;
+package com.synccafe.icafe.iam.application.internal.outboundservices.acl;
 
 import com.synccafe.icafe.contacs.interfaces.acl.ContactsContextFacade;
 import org.springframework.stereotype.Service;

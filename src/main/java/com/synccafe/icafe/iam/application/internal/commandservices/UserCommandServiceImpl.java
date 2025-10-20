@@ -1,6 +1,7 @@
 package com.synccafe.icafe.iam.application.internal.commandservices;
 
-import com.synccafe.icafe.iam.application.internal.outboundservices.ExternalContactService;
+import com.synccafe.icafe.iam.application.internal.outboundservices.acl.ExternalBranchService;
+import com.synccafe.icafe.iam.application.internal.outboundservices.acl.ExternalContactService;
 import com.synccafe.icafe.iam.application.internal.outboundservices.hashing.HashingService;
 import com.synccafe.icafe.iam.application.internal.outboundservices.tokens.TokenService;
 import com.synccafe.icafe.iam.domain.model.aggregates.User;
@@ -24,13 +25,20 @@ public class UserCommandServiceImpl implements UserCommandService {
     private final TokenService tokenService;
     private final RoleRepository roleRepository;
     private final ExternalContactService externalContactService;
+    private final ExternalBranchService externalBranchService;
 
-    public UserCommandServiceImpl(UserRepository userRepository, HashingService hashingService, TokenService tokenService, RoleRepository roleRepository, ExternalContactService externalContactService) {
+    public UserCommandServiceImpl(UserRepository userRepository,
+                                  HashingService hashingService,
+                                  TokenService tokenService,
+                                  RoleRepository roleRepository,
+                                  ExternalContactService externalContactService,
+                                  ExternalBranchService externalBranchService) {
         this.userRepository = userRepository;
         this.hashingService = hashingService;
         this.tokenService = tokenService;
         this.roleRepository = roleRepository;
         this.externalContactService = externalContactService;
+        this.externalBranchService = externalBranchService;
     }
 
     @Override
@@ -51,6 +59,7 @@ public class UserCommandServiceImpl implements UserCommandService {
         var user = new User(command.email(), hashingService.encode(command.password()), roles);
         userRepository.save(user);
         externalContactService.CreateContactPortfolio(user.getId());
+        externalBranchService.CreateDefaultBranchForUser(user.getId());
         return userRepository.findByEmail(command.email());
     }
 
