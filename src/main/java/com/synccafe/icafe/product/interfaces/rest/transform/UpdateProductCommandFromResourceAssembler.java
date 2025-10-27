@@ -1,13 +1,9 @@
 package com.synccafe.icafe.product.interfaces.rest.transform;
 
 import com.synccafe.icafe.product.domain.model.commands.UpdateProductCommand;
-import com.synccafe.icafe.product.domain.model.valueobjects.DirectItemSpec;
-import com.synccafe.icafe.product.domain.model.valueobjects.RecipeItem;
-import com.synccafe.icafe.product.domain.model.valueobjects.UnitType;
 import com.synccafe.icafe.product.interfaces.rest.resources.UpdateProductResource;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class UpdateProductCommandFromResourceAssembler {
 

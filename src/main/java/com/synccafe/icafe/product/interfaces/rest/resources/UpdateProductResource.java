@@ -1,6 +1,5 @@
 package com.synccafe.icafe.product.interfaces.rest.resources;
 
-import com.synccafe.icafe.product.domain.model.valueobjects.UnitType;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 

@@ -1,11 +1,13 @@
 package com.synccafe.icafe.product.domain.services;
 
+import com.synccafe.icafe.product.domain.model.aggregates.Product;
 import com.synccafe.icafe.product.domain.model.commands.*;
 
+import java.util.Optional;
+
 public interface ProductCommandService {
-    Long handle(CreateProductCommand command);
-    void handle(UpdateProductCommand command);
-    void handle(ArchiveProductCommand command);
-    void handle(ActivateProductCommand command);
-    void handle(DeleteProductCommand command);
+    Optional<Product> handle(CreateProductCommand command);
+    Optional<Product> handle(Long productId, UpdateProductCommand command);
+    Optional<Product> handle(Long productId,ActivateProductCommand command);
+    Optional<Product> handle(Long productId,ArchiveProductCommand command);
 }

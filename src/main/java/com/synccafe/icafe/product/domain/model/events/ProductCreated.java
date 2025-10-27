@@ -1,8 +1,5 @@
 package com.synccafe.icafe.product.domain.model.events;
 
-import com.synccafe.icafe.product.domain.model.valueobjects.DirectItemSpec;
-import com.synccafe.icafe.product.domain.model.valueobjects.ProductType;
-import com.synccafe.icafe.product.domain.model.valueobjects.RecipeItem;
 import com.synccafe.icafe.shared.domain.model.events.DomainEvent;
 
 import java.time.Instant;

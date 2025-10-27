@@ -1,9 +1,6 @@
 package com.synccafe.icafe.product.interfaces.rest.transform;
 
 import com.synccafe.icafe.product.domain.model.commands.CreateProductCommand;
-import com.synccafe.icafe.product.domain.model.valueobjects.DirectItemSpec;
-import com.synccafe.icafe.product.domain.model.valueobjects.RecipeItem;
-import com.synccafe.icafe.product.domain.model.valueobjects.UnitType;
 import com.synccafe.icafe.product.interfaces.rest.resources.CreateProductResource;
 
 import java.util.List;
