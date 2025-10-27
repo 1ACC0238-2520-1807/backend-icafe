@@ -22,8 +22,8 @@ public class ProductCommandServiceImpl implements ProductCommandService {
 
     @Override
     public Optional<Product> handle(CreateProductCommand command) {
-        if (productRepository.existsProductByBranchId(new BranchId(command.branchId()))) {
-            throw new IllegalArgumentException("Product with branch ID " + command.branchId() + " already exists.");
+        if(productRepository.existsProductsByName(command.name())) {
+            throw new IllegalArgumentException("Product with name " + command.name() + " already exists.");
         }
         var product = new Product(command);
         productRepository.save(product);
@@ -63,6 +63,18 @@ public class ProductCommandServiceImpl implements ProductCommandService {
         }
         var product = productOpt.get();
         product.archivedProductStatus();
+        productRepository.save(product);
+        return Optional.of(product);
+    }
+
+    @Override
+    public Optional<Product> handle(AddIngredientCommand command) {
+        var productOpt = productRepository.findById(command.productId());
+        if (productOpt.isEmpty()) {
+            throw new IllegalArgumentException("Product with ID " + command.productId() + " does not exist.");
+        }
+        var product = productOpt.get();
+        product.addIngredient(command);
         productRepository.save(product);
         return Optional.of(product);
     }

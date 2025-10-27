@@ -25,8 +25,16 @@ public class Product extends AuditableAbstractAggregateRoot<Product> {
     private String name;
     @Getter
     @Embedded
+    @AttributeOverrides(
+            @AttributeOverride(name = "amount", column = @Column(name = "cost_price"))
+    )
     private Money costPrice;
+    @Getter
+    @Setter
     @Embedded
+    @AttributeOverrides(
+            @AttributeOverride(name = "amount", column = @Column(name = "sale_price"))
+    )
     private Money salePrice;
     @Getter
     @Setter
@@ -34,7 +42,8 @@ public class Product extends AuditableAbstractAggregateRoot<Product> {
     @Getter
     @Setter
     private ProductStatus status;
-
+    @Getter
+    @Setter
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ProductIngredient> ingredients =new HashSet<>();
 

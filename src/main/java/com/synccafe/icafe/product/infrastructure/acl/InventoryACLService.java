@@ -7,34 +7,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class InventoryACLService implements com.synccafe.icafe.product.domain.services.ProductPolicy.InventoryACLService {
+public class InventoryACLService {
 
     // TODO: Inject actual inventory service when available
     // private final InventoryQueryService inventoryQueryService;
 
-    @Override
-    public boolean itemExists(Long itemId) {
-        // TODO: Implement actual call to inventory bounded context
-        // For now, return true to allow development to continue
-        // In real implementation, this would call:
-        // return inventoryQueryService.existsById(itemId);
-        
-        // Temporary implementation - assume all items exist
-        return itemId != null && itemId > 0;
-    }
-
-    @Override
-    public Set<Long> validateItemsExist(List<Long> itemIds) {
-        // TODO: Implement actual batch validation with inventory bounded context
-        // For now, return all provided IDs as existing
-        // In real implementation, this would call:
-        // return inventoryQueryService.findExistingIds(itemIds);
-        
-        // Temporary implementation - assume all items exist
-        return itemIds.stream()
-                .filter(id -> id != null && id > 0)
-                .collect(Collectors.toSet());
-    }
 
     // Additional methods that might be needed for inventory integration
 

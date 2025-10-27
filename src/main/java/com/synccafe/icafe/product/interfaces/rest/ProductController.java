@@ -6,9 +6,11 @@ import com.synccafe.icafe.product.domain.model.queries.GetAllProductsQuery;
 import com.synccafe.icafe.product.domain.model.queries.GetProductByIdQuery;
 import com.synccafe.icafe.product.domain.services.ProductCommandService;
 import com.synccafe.icafe.product.domain.services.ProductQueryService;
+import com.synccafe.icafe.product.interfaces.rest.resources.AddIngredientResource;
 import com.synccafe.icafe.product.interfaces.rest.resources.CreateProductResource;
 import com.synccafe.icafe.product.interfaces.rest.resources.ProductResource;
 import com.synccafe.icafe.product.interfaces.rest.resources.UpdateProductResource;
+import com.synccafe.icafe.product.interfaces.rest.transform.AddIngredientCommandFromResourceAssembler;
 import com.synccafe.icafe.product.interfaces.rest.transform.CreateProductCommandFromResourceAssembler;
 import com.synccafe.icafe.product.interfaces.rest.transform.ProductResourceFromEntityAssembler;
 import com.synccafe.icafe.product.interfaces.rest.transform.UpdateProductCommandFromResourceAssembler;
@@ -40,186 +42,49 @@ public class ProductController {
     }
 
     @PostMapping
-    @Operation(summary = "Create a new product", description = "Creates a new product with the provided information")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Product created successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid input data"),
-            @ApiResponse(responseCode = "409", description = "Product with same name already exists")
-    })
-    public ResponseEntity<ProductResource> createProduct(
-            @Valid @RequestBody CreateProductResource resource) {
-        
-        CreateProductCommand command = CreateProductCommandFromResourceAssembler
-                .toCommandFromResource(resource);
-        
-        Long productId = productCommandService.handle(command);
-        
-        if (productId != null && productId > 0) {
-            GetProductByIdQuery query = new GetProductByIdQuery(productId);
-            Optional<Product> product = productQueryService.handle(query);
-            
-            if (product.isPresent()) {
-                ProductResource productResource = ProductResourceFromEntityAssembler
-                        .toResourceFromEntity(product.get());
-                return new ResponseEntity<>(productResource, HttpStatus.CREATED);
-            }
-        }
-        
-        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<ProductResource> createProduct(@RequestBody CreateProductResource  resource){
+        CreateProductCommand command = CreateProductCommandFromResourceAssembler.toCommandFromResource(resource);
+        var product = productCommandService.handle(command);
+        ProductResource productResource = ProductResourceFromEntityAssembler.toResourceFromEntity(product.get());
+        return new ResponseEntity<>(productResource, HttpStatus.CREATED);
     }
 
     @GetMapping("/{productId}")
-    @Operation(summary = "Get product by ID", description = "Retrieves a product by its unique identifier")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Product found"),
-            @ApiResponse(responseCode = "404", description = "Product not found")
-    })
     public ResponseEntity<ProductResource> getProductById(
-            @Parameter(description = "Product ID", required = true)
-            @PathVariable Long productId) {
-        
+            @Parameter(description = "ID of the product to retrieve") @PathVariable Long productId) {
         GetProductByIdQuery query = new GetProductByIdQuery(productId);
-        Optional<Product> product = productQueryService.handle(query);
-        
-        if (product.isPresent()) {
-            ProductResource productResource = ProductResourceFromEntityAssembler
-                    .toResourceFromEntity(product.get());
+        Optional<Product> productOpt = productQueryService.handle(query);
+        if (productOpt.isPresent()) {
+            ProductResource productResource = ProductResourceFromEntityAssembler.toResourceFromEntity(productOpt.get());
             return ResponseEntity.ok(productResource);
+        } else {
+            return ResponseEntity.notFound().build();
         }
-        
-        return ResponseEntity.notFound().build();
-    }
-
-    @GetMapping
-    @Operation(summary = "Get all products", description = "Retrieves all products for a specific owner and branch")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Products retrieved successfully")
-    })
-    public ResponseEntity<List<ProductResource>> getAllProducts(
-            @Parameter(description = "Owner ID", required = true)
-            @RequestParam Long ownerId,
-            @Parameter(description = "Branch ID", required = true)
-            @RequestParam Long branchId) {
-        
-        GetAllProductsQuery query = new GetAllProductsQuery(ownerId, branchId);
-        List<Product> products = productQueryService.handle(query);
-        
-        List<ProductResource> productResources = ProductResourceFromEntityAssembler
-                .toResourceListFromEntityList(products);
-        
-        return ResponseEntity.ok(productResources);
     }
 
     @PutMapping("/{productId}")
-    @Operation(summary = "Update product", description = "Updates an existing product with the provided information")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Product updated successfully"),
-            @ApiResponse(responseCode = "404", description = "Product not found"),
-            @ApiResponse(responseCode = "400", description = "Invalid input data")
-    })
     public ResponseEntity<ProductResource> updateProduct(
-            @Parameter(description = "Product ID", required = true)
-            @PathVariable Long productId,
+            @Parameter(description = "ID of the product to update") @PathVariable Long productId,
             @Valid @RequestBody UpdateProductResource resource) {
-        
-        try {
-            UpdateProductCommand command = UpdateProductCommandFromResourceAssembler
-                    .toCommandFromResource(productId, resource);
-            
-            productCommandService.handle(command);
-            
-            // Query the updated product
-            GetProductByIdQuery query = new GetProductByIdQuery(productId);
-            Optional<Product> updatedProduct = productQueryService.handle(query);
-            
-            if (updatedProduct.isPresent()) {
-                ProductResource productResource = ProductResourceFromEntityAssembler
-                        .toResourceFromEntity(updatedProduct.get());
-                return ResponseEntity.ok(productResource);
-            }
-            
-            return ResponseEntity.notFound().build();
-        } catch (IllegalArgumentException e) {
+        UpdateProductCommand command = UpdateProductCommandFromResourceAssembler.toCommandFromResource(resource);
+        var updatedProductOpt = productCommandService.handle(productId, command);
+        if (updatedProductOpt.isPresent()) {
+            ProductResource productResource = ProductResourceFromEntityAssembler.toResourceFromEntity(updatedProductOpt.get());
+            return ResponseEntity.ok(productResource);
+        } else {
             return ResponseEntity.notFound().build();
         }
     }
 
-    @PatchMapping("/{productId}/archive")
-    @Operation(summary = "Archive product", description = "Archives a product, making it inactive")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Product archived successfully"),
-            @ApiResponse(responseCode = "404", description = "Product not found")
-    })
-    public ResponseEntity<ProductResource> archiveProduct(
-            @Parameter(description = "Product ID", required = true)
-            @PathVariable Long productId) {
-        
-        try {
-            ArchiveProductCommand command = new ArchiveProductCommand(productId);
-            productCommandService.handle(command);
-            
-            // Query the archived product
-            GetProductByIdQuery query = new GetProductByIdQuery(productId);
-            Optional<Product> archivedProduct = productQueryService.handle(query);
-            
-            if (archivedProduct.isPresent()) {
-                ProductResource productResource = ProductResourceFromEntityAssembler
-                        .toResourceFromEntity(archivedProduct.get());
-                return ResponseEntity.ok(productResource);
-            }
-            
-            return ResponseEntity.notFound().build();
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
-        }
+    //Agregar ingredientes al producto
+    @PostMapping("/{productId}/ingredients")
+    public ResponseEntity<ProductResource> addIngredientsToProduct(
+            @Parameter(description = "ID of the product to add ingredients to") @PathVariable Long productId,
+            @RequestBody AddIngredientResource resource) {
+        AddIngredientCommand command = AddIngredientCommandFromResourceAssembler.toCommandFromResource(productId, resource);
+        var updatedProductOpt = productCommandService.handle(command);
+        var productResource = ProductResourceFromEntityAssembler.toResourceFromEntity(updatedProductOpt.get());
+        return ResponseEntity.ok(productResource);
     }
 
-    @PatchMapping("/{productId}/activate")
-    @Operation(summary = "Activate product", description = "Activates an archived product")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Product activated successfully"),
-            @ApiResponse(responseCode = "404", description = "Product not found")
-    })
-    public ResponseEntity<ProductResource> activateProduct(
-            @Parameter(description = "Product ID", required = true)
-            @PathVariable Long productId) {
-        
-        try {
-            ActivateProductCommand command = new ActivateProductCommand(productId);
-            productCommandService.handle(command);
-            
-            // Query the activated product
-            GetProductByIdQuery query = new GetProductByIdQuery(productId);
-            Optional<Product> activatedProduct = productQueryService.handle(query);
-            
-            if (activatedProduct.isPresent()) {
-                ProductResource productResource = ProductResourceFromEntityAssembler
-                        .toResourceFromEntity(activatedProduct.get());
-                return ResponseEntity.ok(productResource);
-            }
-            
-            return ResponseEntity.notFound().build();
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @DeleteMapping("/{productId}")
-    @Operation(summary = "Delete product", description = "Permanently deletes a product")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Product deleted successfully"),
-            @ApiResponse(responseCode = "404", description = "Product not found")
-    })
-    public ResponseEntity<Void> deleteProduct(
-            @Parameter(description = "Product ID", required = true)
-            @PathVariable Long productId) {
-        
-        try {
-            DeleteProductCommand command = new DeleteProductCommand(productId);
-            productCommandService.handle(command);
-            return ResponseEntity.noContent().build();
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
 }

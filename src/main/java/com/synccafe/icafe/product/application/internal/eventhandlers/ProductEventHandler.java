@@ -11,24 +11,6 @@ public class ProductEventHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(ProductEventHandler.class);
 
-    @EventListener
-    public void on(ProductCreated event) {
-        logger.info("Product created: {} (ID: {}) for owner {} in branch {}", 
-                   event.name(), event.productId(), event.ownerId(), event.branchId());
-        
-        // Here you could implement additional logic like:
-        // - Sending notifications
-        // - Updating projections
-        // - Integrating with other bounded contexts
-    }
-
-    @EventListener
-    public void on(ProductUpdated event) {
-        logger.info("Product updated: {} (ID: {}) - Changed fields: {}", 
-                   event.name(), event.productId(), event.changedFields());
-        
-        // Additional logic for product updates
-    }
 
     @EventListener
     public void on(ProductArchived event) {
