@@ -1,6 +1,7 @@
 package com.synccafe.icafe.product.application.internal.queryservices;
 
 import com.synccafe.icafe.product.domain.model.aggregates.Product;
+import com.synccafe.icafe.product.domain.model.queries.GetAllProductsByBranchIdQuery;
 import com.synccafe.icafe.product.domain.model.queries.GetAllProductsQuery;
 import com.synccafe.icafe.product.domain.model.queries.GetProductByIdQuery;
 import com.synccafe.icafe.product.domain.model.valueobjects.BranchId;
@@ -29,5 +30,12 @@ public class ProductQueryServiceImpl implements ProductQueryService {
     @Override
     public List<Product> handle(GetAllProductsQuery query) {
         return productRepository.findAll();
+    }
+
+    @Override
+    public List<Product> handle(GetAllProductsByBranchIdQuery query) {
+        return productRepository.findAll().stream()
+                .filter(product -> product.getBranchId().equals(new BranchId(query.branchId())))
+                .toList();
     }
 }

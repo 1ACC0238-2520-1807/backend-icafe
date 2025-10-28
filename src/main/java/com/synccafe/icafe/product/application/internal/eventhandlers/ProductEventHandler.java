@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
+
+//No esta en uso-voy a ver si es necesario eliminarlo
 @Service
 public class ProductEventHandler {
 

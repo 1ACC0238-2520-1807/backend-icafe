@@ -78,4 +78,12 @@ public class ProductCommandServiceImpl implements ProductCommandService {
         productRepository.save(product);
         return Optional.of(product);
     }
+
+    @Override
+    public void handle(RemoveIngredientCommand command) {
+        var product = productRepository.findById(command.productId())
+                .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+        product.removeIngredient(command);
+        productRepository.save(product);
+    }
 }

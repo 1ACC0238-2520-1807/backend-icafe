@@ -11,4 +11,6 @@ public interface ProductCommandService {
     Optional<Product> handle(Long productId,ActivateProductCommand command);
     Optional<Product> handle(Long productId,ArchiveProductCommand command);
     Optional<Product> handle(AddIngredientCommand command);
+    void handle(RemoveIngredientCommand command);
+
 }
