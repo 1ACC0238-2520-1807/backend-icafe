@@ -4,7 +4,7 @@ import com.synccafe.icafe.product.domain.model.aggregates.Product;
 import com.synccafe.icafe.product.interfaces.rest.resources.ProductIngredientResource;
 import com.synccafe.icafe.product.interfaces.rest.resources.ProductResource;
 
-import java.util.List;
+
 import java.util.stream.Collectors;
 
 public class ProductResourceFromEntityAssembler {
@@ -19,7 +19,7 @@ public class ProductResourceFromEntityAssembler {
                 entity.getProfitMargin(),
                 entity.getStatus(),
                 entity.getIngredients().stream()
-                        .map(i -> new ProductIngredientResource(i.getSupplyItemId().supplyItemId(), i.getQuantity()))
+                        .map(i -> new ProductIngredientResource(i.getSupplyItem().getId(), i.getQuantity()))
                         .collect(Collectors.toSet())
         );
     }
