@@ -4,6 +4,7 @@ import com.synccafe.icafe.product.domain.model.commands.CreateProductCommand;
 import com.synccafe.icafe.product.domain.model.commands.RemoveIngredientCommand;
 import com.synccafe.icafe.product.domain.model.commands.UpdateProductCommand;
 import com.synccafe.icafe.product.domain.model.entities.ProductIngredient;
+import com.synccafe.icafe.product.domain.model.entities.SupplyItem;
 import com.synccafe.icafe.product.domain.model.valueobjects.*;
 import com.synccafe.icafe.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import jakarta.persistence.*;
@@ -93,22 +94,30 @@ public class Product extends AuditableAbstractAggregateRoot<Product> {
 
     public void addIngredient(AddIngredientCommand command){
         ProductIngredient ingredient = new ProductIngredient(
-                command.supplyItemId(),
+                command.supplyItem(),
                 command.quantity(),
                 this
         );
         this.ingredients.add(ingredient);
+        recalculateCostPrice();
     }
 
     public void removeIngredient(RemoveIngredientCommand command) {
         this.ingredients.removeIf(ingredient -> {
-            var supplyIdVo = ingredient.getSupplyItemId();
-            if (supplyIdVo == null) return false;
-            // Si el Value Object tiene el método supplyItemId() (como BranchId.branchId()),
-            // obtener el Long interno y compararlo con el command.supplyItemId()
-            return supplyIdVo.supplyItemId().equals(command.supplyItemId());
+            SupplyItem supplyItem = ingredient.getSupplyItem();
+            if (supplyItem == null || supplyItem.getId() == null) return false;
+            return supplyItem.getId().equals(command.supplyItemId());
         });
     }
+
+    private void recalculateCostPrice() {
+        double totalCost = ingredients.stream()
+                .mapToDouble(i -> i.getSupplyItem().getUnitPrice() * i.getQuantity())
+                .sum();
+        this.costPrice = new Money(totalCost);
+        this.salePrice = calculateSalePriceFromCostAndMargin(this.costPrice, this.profitMargin);
+    }
+
 
 
 

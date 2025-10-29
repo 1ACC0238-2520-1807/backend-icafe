@@ -1,7 +1,6 @@
 package com.synccafe.icafe.product.domain.model.entities;
 
 import com.synccafe.icafe.product.domain.model.aggregates.Product;
-import com.synccafe.icafe.product.domain.model.valueobjects.SupplyItemId;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,8 +13,9 @@ public class ProductIngredient {
 
     @Getter
     @Setter
-    @Embedded
-    private SupplyItemId supplyItemId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "supply_item_id")
+    private SupplyItem supplyItem;
     @Getter
     @Setter
     private double quantity;
@@ -27,8 +27,8 @@ public class ProductIngredient {
     protected ProductIngredient() {
     }
 
-    public ProductIngredient(Long supplyItemId, double quantity, Product product) {
-        this.supplyItemId = new SupplyItemId(supplyItemId);
+    public ProductIngredient(SupplyItem supplyItem , double quantity, Product product) {
+        this.supplyItem = supplyItem;
         this.quantity = quantity;
         this.product = product;
     }
