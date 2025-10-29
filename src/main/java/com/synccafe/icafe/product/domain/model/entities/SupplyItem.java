@@ -68,7 +68,6 @@ public class SupplyItem extends AuditableAbstractAggregateRoot<SupplyItem> {
 
     public void updateSupplyItem(UpdateSupplyItemCommand command) {
         this.name = command.name();
-        this.unit = command.unit();
         this.unitPrice = command.unitPrice();
         this.stock = command.stock();
         this.expiredDate = command.expiredDate();
