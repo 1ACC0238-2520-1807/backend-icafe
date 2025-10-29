@@ -1,8 +1,9 @@
 package com.synccafe.icafe.product.application.internal.queryservices;
 
-import com.synccafe.icafe.inventory.domain.model.queries.GetAllSupplyItemsQuery;
-import com.synccafe.icafe.inventory.domain.model.queries.GetSupplyItemByIdQuery;
+
 import com.synccafe.icafe.product.domain.model.entities.SupplyItem;
+import com.synccafe.icafe.product.domain.model.queries.GetAllSupplyItemsQuery;
+import com.synccafe.icafe.product.domain.model.queries.GetSupplyItemByIdQuery;
 import com.synccafe.icafe.product.domain.services.SupplyItemQueryService;
 import com.synccafe.icafe.product.infrastructure.persistence.jpa.repositories.SupplyItemRepository;
 import org.springframework.stereotype.Service;
@@ -21,11 +22,11 @@ public class SupplyItemQueryServiceImpl implements SupplyItemQueryService {
 
     @Override
     public List<SupplyItem> handle(GetAllSupplyItemsQuery query) {
-        return List.of();
+        return supplyItemRepository.findAll();
     }
 
     @Override
     public Optional<SupplyItem> handle(GetSupplyItemByIdQuery query) {
-        return Optional.empty();
+        return supplyItemRepository.findById(query.supplyItemId());
     }
 }

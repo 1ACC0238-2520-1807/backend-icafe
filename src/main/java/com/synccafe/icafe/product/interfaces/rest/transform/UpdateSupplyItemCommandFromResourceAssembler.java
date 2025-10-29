@@ -7,7 +7,6 @@ import com.synccafe.icafe.product.interfaces.rest.resources.UpdateSupplyItemReso
 public class UpdateSupplyItemCommandFromResourceAssembler {
     public static UpdateSupplyItemCommand toCommandFromResource(UpdateSupplyItemResource resource) {
         return new UpdateSupplyItemCommand(
-                resource.supplyItemId(),
                 resource.name(),
                 resource.unitPrice(),
                 resource.stock(),

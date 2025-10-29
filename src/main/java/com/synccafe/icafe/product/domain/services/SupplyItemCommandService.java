@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface SupplyItemCommandService {
     Optional<SupplyItem> handle(CreateSupplyItemCommand command);
-    Optional<SupplyItem> handle(UpdateSupplyItemCommand command);
+    Optional<SupplyItem> handle(Long supplyItemId ,UpdateSupplyItemCommand command);
     Optional<SupplyItem> handle(DeleteSupplyItemCommand command);
 
 

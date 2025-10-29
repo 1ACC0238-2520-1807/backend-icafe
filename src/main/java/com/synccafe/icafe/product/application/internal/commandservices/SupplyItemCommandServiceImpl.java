@@ -21,16 +21,31 @@ public class SupplyItemCommandServiceImpl implements SupplyItemCommandService {
 
     @Override
     public Optional<SupplyItem> handle(CreateSupplyItemCommand command) {
-        return Optional.empty();
+        var supplyItem = new SupplyItem(command);
+        SupplyItem savedSupplyItem = supplyItemRepository.save(supplyItem);
+        return Optional.of(savedSupplyItem);
     }
 
     @Override
-    public Optional<SupplyItem> handle(UpdateSupplyItemCommand command) {
-        return Optional.empty();
+    public Optional<SupplyItem> handle(Long supplyItemId, UpdateSupplyItemCommand command) {
+        var optionalSupplyItem = supplyItemRepository.findById(supplyItemId);
+        if (optionalSupplyItem.isEmpty()) {
+            throw new IllegalArgumentException("SupplyItem with ID " + supplyItemId + " not found.");
+        }
+        var supplyItem = optionalSupplyItem.get();
+        supplyItem.updateSupplyItem(command);
+        supplyItemRepository.save(supplyItem);
+        return Optional.of(supplyItem);
     }
 
     @Override
     public Optional<SupplyItem> handle(DeleteSupplyItemCommand command) {
-        return Optional.empty();
+        var optionalSupplyItem = supplyItemRepository.findById(command.SupplyItemId());
+        if (optionalSupplyItem.isEmpty()) {
+            throw new IllegalArgumentException("SupplyItem with ID " + command.SupplyItemId() + " not found.");
+        }
+        var supplyItem = optionalSupplyItem.get();
+        supplyItemRepository.delete(supplyItem);
+        return Optional.of(supplyItem);
     }
 }
