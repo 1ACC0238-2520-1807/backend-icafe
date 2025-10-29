@@ -92,15 +92,24 @@ public class Product extends AuditableAbstractAggregateRoot<Product> {
         this.status = ProductStatus.ARCHIVED;
     }
 
+    /*
     public void addIngredient(AddIngredientCommand command){
         ProductIngredient ingredient = new ProductIngredient(
-                command.supplyItem(),
+                command.supplyItemId(),
                 command.quantity(),
                 this
         );
         this.ingredients.add(ingredient);
         recalculateCostPrice();
     }
+    */
+    public void addIngredient(SupplyItem supplyItem, double quantity) {
+        ProductIngredient ingredient = new ProductIngredient(supplyItem, quantity, this);
+        this.ingredients.add(ingredient);
+        recalculateCostPrice();
+    }
+
+
 
     public void removeIngredient(RemoveIngredientCommand command) {
         this.ingredients.removeIf(ingredient -> {
@@ -108,9 +117,10 @@ public class Product extends AuditableAbstractAggregateRoot<Product> {
             if (supplyItem == null || supplyItem.getId() == null) return false;
             return supplyItem.getId().equals(command.supplyItemId());
         });
+        recalculateCostPrice();
     }
 
-    private void recalculateCostPrice() {
+    public void recalculateCostPrice() {
         double totalCost = ingredients.stream()
                 .mapToDouble(i -> i.getSupplyItem().getUnitPrice() * i.getQuantity())
                 .sum();

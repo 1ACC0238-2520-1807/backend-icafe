@@ -2,10 +2,12 @@ package com.synccafe.icafe.product.application.internal.commandservices;
 
 import com.synccafe.icafe.product.domain.model.aggregates.Product;
 import com.synccafe.icafe.product.domain.model.commands.*;
+import com.synccafe.icafe.product.domain.model.entities.SupplyItem;
 import com.synccafe.icafe.product.domain.model.valueobjects.BranchId;
 import com.synccafe.icafe.product.domain.services.ProductCommandService;
 import com.synccafe.icafe.product.infrastructure.persistence.jpa.repositories.ProductRepository;
 import com.synccafe.icafe.product.infrastructure.acl.InventoryACLService;
+import com.synccafe.icafe.product.infrastructure.persistence.jpa.repositories.SupplyItemRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,9 +17,11 @@ import java.util.Optional;
 public class ProductCommandServiceImpl implements ProductCommandService {
 
     private final ProductRepository productRepository;
+    private final SupplyItemRepository supplyItemRepository;
 
-    public ProductCommandServiceImpl(ProductRepository productRepository) {
+    public ProductCommandServiceImpl(ProductRepository productRepository, SupplyItemRepository supplyItemRepository) {
         this.productRepository = productRepository;
+        this.supplyItemRepository = supplyItemRepository;
     }
 
     @Override
@@ -74,7 +78,9 @@ public class ProductCommandServiceImpl implements ProductCommandService {
             throw new IllegalArgumentException("Product with ID " + command.productId() + " does not exist.");
         }
         var product = productOpt.get();
-        product.addIngredient(command);
+        SupplyItem supplyItem = supplyItemRepository.findById(command.supplyItemId())
+                .orElseThrow(() -> new IllegalArgumentException("Supply item not found"));
+        product.addIngredient(supplyItem, command.quantity());
         productRepository.save(product);
         return Optional.of(product);
     }

@@ -4,7 +4,7 @@ import com.synccafe.icafe.product.domain.model.entities.SupplyItem;
 
 public record AddIngredientCommand(
         Long productId,
-        SupplyItem supplyItem,
+        Long supplyItemId,
         double quantity
 ) {
 }
