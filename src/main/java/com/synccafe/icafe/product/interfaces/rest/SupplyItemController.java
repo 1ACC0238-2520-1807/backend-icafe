@@ -1,6 +1,7 @@
 package com.synccafe.icafe.product.interfaces.rest;
 
 import com.synccafe.icafe.product.domain.model.commands.CreateSupplyItemCommand;
+import com.synccafe.icafe.product.domain.model.commands.DeleteSupplyItemCommand;
 import com.synccafe.icafe.product.domain.model.commands.UpdateSupplyItemCommand;
 import com.synccafe.icafe.product.domain.model.queries.GetAllSupplyItemsQuery;
 import com.synccafe.icafe.product.domain.model.queries.GetSupplyItemByIdQuery;
@@ -73,6 +74,15 @@ public class SupplyItemController {
         }
     }
 
-
-
+    @DeleteMapping("/{id}")
+    public ResponseEntity<SupplyItemResource> deleteSupplyItem(@PathVariable Long id) {
+        DeleteSupplyItemCommand command = new DeleteSupplyItemCommand(id);
+        var supplyItemOptional = supplyItemCommandService.handle(command);
+        if (supplyItemOptional.isPresent()) {
+            SupplyItemResource supplyItemResource = SupplyItemResourceFromEntityAssembler.toResourceFromEntity(supplyItemOptional.get());
+            return ResponseEntity.ok(supplyItemResource);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }
