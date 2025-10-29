@@ -1,5 +1,4 @@
 package com.synccafe.icafe.product.domain.model.aggregates;
-import com.synccafe.icafe.inventory.domain.model.valueobjects.Quantity;
 import com.synccafe.icafe.product.domain.model.commands.AddIngredientCommand;
 import com.synccafe.icafe.product.domain.model.commands.CreateProductCommand;
 import com.synccafe.icafe.product.domain.model.commands.RemoveIngredientCommand;
