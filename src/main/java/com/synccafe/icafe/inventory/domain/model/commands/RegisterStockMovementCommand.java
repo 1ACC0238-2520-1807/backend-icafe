@@ -3,14 +3,18 @@ package com.synccafe.icafe.inventory.domain.model.commands;
 import com.synccafe.icafe.inventory.domain.model.entities.StockMovement;
 
 public record RegisterStockMovementCommand(
-    Long productId,
+    Long supplyItemId,
+    Long branchId,
     StockMovement.MovementType type,
     Double quantity,
     String origin
 ) {
     public RegisterStockMovementCommand {
-        if (productId == null) {
-            throw new IllegalArgumentException("Product ID cannot be null");
+        if (supplyItemId == null) {
+            throw new IllegalArgumentException("SupplyItem ID cannot be null");
+        }
+        if (branchId == null) {
+            throw new IllegalArgumentException("Branch ID cannot be null");
         }
         if (type == null) {
             throw new IllegalArgumentException("Movement type cannot be null");

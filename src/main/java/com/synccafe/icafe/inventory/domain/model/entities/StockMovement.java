@@ -1,5 +1,6 @@
 package com.synccafe.icafe.inventory.domain.model.entities;
 
+import com.synccafe.icafe.product.domain.model.valueobjects.BranchId;
 import com.synccafe.icafe.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -12,7 +13,11 @@ import java.time.LocalDateTime;
 public class StockMovement extends AuditableAbstractAggregateRoot<StockMovement> {
     
     @Column(nullable = false)
-    private Long productId;
+    private Long supplyItemId;
+
+    @Embedded
+    @AttributeOverride(name = "branchId", column = @Column(name = "branch_id", nullable = false))
+    private BranchId branchId;
     
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -29,9 +34,10 @@ public class StockMovement extends AuditableAbstractAggregateRoot<StockMovement>
     
     protected StockMovement() {}
     
-    public StockMovement(Long productId, MovementType type, Double quantity, String origin) {
+    public StockMovement(Long supplyItemId, Long branchId, MovementType type, Double quantity, String origin) {
         this();
-        this.productId = productId;
+        this.supplyItemId = supplyItemId;
+        this.branchId = new BranchId(branchId);
         this.type = type;
         this.quantity = quantity;
         this.origin = origin;
@@ -41,8 +47,11 @@ public class StockMovement extends AuditableAbstractAggregateRoot<StockMovement>
     }
     
     private void validateMovement() {
-        if (productId == null) {
-            throw new IllegalArgumentException("Product ID cannot be null");
+        if (supplyItemId == null) {
+            throw new IllegalArgumentException("SupplyItem ID cannot be null");
+        }
+        if (branchId == null) {
+            throw new IllegalArgumentException("Branch ID cannot be null");
         }
         if (type == null) {
             throw new IllegalArgumentException("Movement type cannot be null");

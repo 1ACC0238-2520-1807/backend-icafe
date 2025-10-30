@@ -7,7 +7,8 @@ public class RegisterStockMovementCommandFromResourceAssembler {
     
     public static RegisterStockMovementCommand toCommandFromResource(RegisterStockMovementResource resource) {
         return new RegisterStockMovementCommand(
-            resource.productId(),
+            resource.supplyItemId(),
+            resource.branchId(),
             resource.type(),
             resource.quantity(),
             resource.origin()

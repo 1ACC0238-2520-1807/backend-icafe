@@ -26,16 +26,18 @@ public class InventoryCommandServiceImpl implements InventoryCommandService {
     public void handle(RegisterStockMovementCommand command) {
         // Crear y guardar el movimiento
         StockMovement movement = new StockMovement(
-            command.productId(),
+            command.supplyItemId(),
+            command.branchId(),
             command.type(),
             command.quantity(),
             command.origin()
         );
         stockMovementRepository.save(movement);
         
-        // Actualizar el stock del producto
-        ProductStock productStock = productStockRepository.findByProductId(command.productId())
-            .orElse(new ProductStock(command.productId()));
+        // Actualizar el stock del insumo (SupplyItem) por sucursal
+        ProductStock productStock = productStockRepository
+            .findBySupplyItemIdAndBranchId(command.supplyItemId(), new com.synccafe.icafe.product.domain.model.valueobjects.BranchId(command.branchId()))
+            .orElse(new ProductStock(command.supplyItemId(), command.branchId()));
         
         switch (command.type()) {
             case ENTRADA -> productStock.addStock(command.quantity());

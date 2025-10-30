@@ -1,6 +1,7 @@
 package com.synccafe.icafe.inventory.interfaces.rest.resources;
 
 public record CurrentStockResource(
-    Long productId,
+    Long branchId,
+    Long supplyItemId,
     Double currentStock
 ) {}

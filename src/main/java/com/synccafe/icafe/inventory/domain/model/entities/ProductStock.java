@@ -1,25 +1,34 @@
 package com.synccafe.icafe.inventory.domain.model.entities;
 
+import com.synccafe.icafe.product.domain.model.valueobjects.BranchId;
 import com.synccafe.icafe.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import jakarta.persistence.*;
 import lombok.Getter;
 
 @Entity
-@Table(name = "product_stocks")
+@Table(
+    name = "product_stocks",
+    uniqueConstraints = @UniqueConstraint(columnNames = {"supply_item_id", "branch_id"})
+)
 @Getter
 public class ProductStock extends AuditableAbstractAggregateRoot<ProductStock> {
     
-    @Column(nullable = false, unique = true)
-    private Long productId;
+    @Column(name = "supply_item_id", nullable = false)
+    private Long supplyItemId;
+
+    @Embedded
+    @AttributeOverride(name = "branchId", column = @Column(name = "branch_id", nullable = false))
+    private BranchId branchId;
     
     @Column(nullable = false)
     private Double currentStock;
     
     protected ProductStock() {}
     
-    public ProductStock(Long productId) {
+    public ProductStock(Long supplyItemId, Long branchId) {
         this();
-        this.productId = productId;
+        this.supplyItemId = supplyItemId;
+        this.branchId = new BranchId(branchId);
         this.currentStock = 0.0;
         
         validateProductStock();
@@ -43,8 +52,11 @@ public class ProductStock extends AuditableAbstractAggregateRoot<ProductStock> {
     }
     
     private void validateProductStock() {
-        if (productId == null) {
-            throw new IllegalArgumentException("Product ID cannot be null");
+        if (supplyItemId == null) {
+            throw new IllegalArgumentException("SupplyItem ID cannot be null");
+        }
+        if (branchId == null) {
+            throw new IllegalArgumentException("Branch ID cannot be null");
         }
     }
 }

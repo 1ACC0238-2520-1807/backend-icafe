@@ -4,7 +4,7 @@ import com.synccafe.icafe.inventory.interfaces.rest.resources.CurrentStockResour
 
 public class CurrentStockResourceFromEntityAssembler {
     
-    public static CurrentStockResource toResourceFromStock(Long productId, Double currentStock) {
-        return new CurrentStockResource(productId, currentStock);
+    public static CurrentStockResource toResourceFromStock(Long branchId, Long supplyItemId, Double currentStock) {
+        return new CurrentStockResource(branchId, supplyItemId, currentStock);
     }
 }

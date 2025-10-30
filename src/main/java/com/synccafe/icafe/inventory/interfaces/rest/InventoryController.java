@@ -28,19 +28,19 @@ public class InventoryController {
     }
     
     @PostMapping("/movements")
-    @Operation(summary = "Register a stock movement", description = "Register an entry or exit movement for a product")
+    @Operation(summary = "Register a stock movement", description = "Register an entry or exit movement for a supply item by branch")
     public ResponseEntity<Void> registerStockMovement(@RequestBody RegisterStockMovementResource resource) {
         var command = RegisterStockMovementCommandFromResourceAssembler.toCommandFromResource(resource);
         inventoryCommandService.handle(command);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
     
-    @GetMapping("/stock/{productId}")
-    @Operation(summary = "Get current stock", description = "Get the current stock level for a specific product")
-    public ResponseEntity<CurrentStockResource> getCurrentStock(@PathVariable Long productId) {
-        var query = new GetCurrentStockQuery(productId);
+    @GetMapping("/stock/{branchId}/{supplyItemId}")
+    @Operation(summary = "Get current stock", description = "Get the current stock level for a specific supply item in a branch")
+    public ResponseEntity<CurrentStockResource> getCurrentStock(@PathVariable Long branchId, @PathVariable Long supplyItemId) {
+        var query = new GetCurrentStockQuery(branchId, supplyItemId);
         var currentStock = inventoryQueryService.handle(query);
-        var resource = CurrentStockResourceFromEntityAssembler.toResourceFromStock(productId, currentStock);
+        var resource = CurrentStockResourceFromEntityAssembler.toResourceFromStock(branchId, supplyItemId, currentStock);
         return ResponseEntity.ok(resource);
     }
 }

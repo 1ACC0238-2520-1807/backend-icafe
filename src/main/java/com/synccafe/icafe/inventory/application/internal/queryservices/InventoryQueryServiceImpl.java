@@ -16,7 +16,7 @@ public class InventoryQueryServiceImpl implements InventoryQueryService {
     
     @Override
     public Double handle(GetCurrentStockQuery query) {
-        return productStockRepository.findByProductId(query.productId())
+        return productStockRepository.findBySupplyItemIdAndBranchId(query.supplyItemId(), new com.synccafe.icafe.product.domain.model.valueobjects.BranchId(query.branchId()))
             .map(productStock -> productStock.getCurrentStock())
             .orElse(0.0);
     }
