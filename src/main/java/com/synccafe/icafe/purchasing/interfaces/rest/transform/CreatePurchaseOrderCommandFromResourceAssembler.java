@@ -8,9 +8,7 @@ public class CreatePurchaseOrderCommandFromResourceAssembler {
     public static CreatePurchaseOrderCommand toCommandFromResource(CreatePurchaseOrderResource resource) {
         return new CreatePurchaseOrderCommand(
             resource.branchId(),
-            resource.supplierName(),
-            resource.supplierEmail(),
-            resource.supplierPhone(),
+            resource.providerId(),
             resource.supplyItemId(),
             resource.unitPrice(),
             resource.quantity(),

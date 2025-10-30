@@ -27,11 +27,14 @@ public class PurchaseOrderController {
 
     private final PurchaseOrderCommandService purchaseOrderCommandService;
     private final PurchaseOrderQueryService purchaseOrderQueryService;
+    private final PurchaseOrderResourceFromEntityAssembler purchaseOrderResourceFromEntityAssembler;
 
     public PurchaseOrderController(PurchaseOrderCommandService purchaseOrderCommandService,
-                                 PurchaseOrderQueryService purchaseOrderQueryService) {
+                                 PurchaseOrderQueryService purchaseOrderQueryService,
+                                 PurchaseOrderResourceFromEntityAssembler purchaseOrderResourceFromEntityAssembler) {
         this.purchaseOrderCommandService = purchaseOrderCommandService;
         this.purchaseOrderQueryService = purchaseOrderQueryService;
+        this.purchaseOrderResourceFromEntityAssembler = purchaseOrderResourceFromEntityAssembler;
     }
 
     @PostMapping
@@ -48,7 +51,7 @@ public class PurchaseOrderController {
             return ResponseEntity.badRequest().build();
         }
         
-        var purchaseOrderResource = PurchaseOrderResourceFromEntityAssembler.toResourceFromEntity(purchaseOrder.get());
+        var purchaseOrderResource = purchaseOrderResourceFromEntityAssembler.toResourceFromEntity(purchaseOrder.get());
         return ResponseEntity.status(HttpStatus.CREATED).body(purchaseOrderResource);
     }
 
@@ -60,7 +63,7 @@ public class PurchaseOrderController {
         var purchaseOrders = purchaseOrderQueryService.handle(query);
         
         var resources = purchaseOrders.stream()
-                .map(PurchaseOrderResourceFromEntityAssembler::toResourceFromEntity)
+                .map(purchaseOrderResourceFromEntityAssembler::toResourceFromEntity)
                 .toList();
         
         return ResponseEntity.ok(resources);
@@ -78,7 +81,7 @@ public class PurchaseOrderController {
             return ResponseEntity.notFound().build();
         }
         
-        var resource = PurchaseOrderResourceFromEntityAssembler.toResourceFromEntity(purchaseOrder.get());
+        var resource = purchaseOrderResourceFromEntityAssembler.toResourceFromEntity(purchaseOrder.get());
         return ResponseEntity.ok(resource);
     }
 
@@ -93,7 +96,7 @@ public class PurchaseOrderController {
             return ResponseEntity.notFound().build();
         }
         
-        var resource = PurchaseOrderResourceFromEntityAssembler.toResourceFromEntity(purchaseOrder.get());
+        var resource = purchaseOrderResourceFromEntityAssembler.toResourceFromEntity(purchaseOrder.get());
         return ResponseEntity.ok(resource);
     }
 
@@ -108,7 +111,7 @@ public class PurchaseOrderController {
             return ResponseEntity.notFound().build();
         }
         
-        var resource = PurchaseOrderResourceFromEntityAssembler.toResourceFromEntity(purchaseOrder.get());
+        var resource = purchaseOrderResourceFromEntityAssembler.toResourceFromEntity(purchaseOrder.get());
         return ResponseEntity.ok(resource);
     }
 
@@ -123,7 +126,7 @@ public class PurchaseOrderController {
             return ResponseEntity.notFound().build();
         }
         
-        var resource = PurchaseOrderResourceFromEntityAssembler.toResourceFromEntity(purchaseOrder.get());
+        var resource = purchaseOrderResourceFromEntityAssembler.toResourceFromEntity(purchaseOrder.get());
         return ResponseEntity.ok(resource);
     }
 }

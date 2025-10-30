@@ -4,9 +4,7 @@ import java.time.LocalDate;
 
 public record CreatePurchaseOrderCommand(
     Long branchId,
-    String supplierName,
-    String supplierEmail,
-    String supplierPhone,
+    Long providerId,
     Long supplyItemId,
     Double unitPrice,
     Double quantity,
@@ -18,8 +16,8 @@ public record CreatePurchaseOrderCommand(
         if (branchId == null || branchId <= 0) {
             throw new IllegalArgumentException("El ID de la sucursal debe ser mayor a cero");
         }
-        if (supplierName == null || supplierName.isBlank()) {
-            throw new IllegalArgumentException("El nombre del proveedor no puede estar vacío");
+        if (providerId == null || providerId <= 0) {
+            throw new IllegalArgumentException("El ID del proveedor debe ser mayor a cero");
         }
         if (supplyItemId == null || supplyItemId <= 0) {
             throw new IllegalArgumentException("El ID del insumo debe ser mayor a cero");

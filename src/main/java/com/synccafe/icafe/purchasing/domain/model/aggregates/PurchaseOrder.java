@@ -5,7 +5,6 @@ import com.synccafe.icafe.product.domain.model.valueobjects.Money;
 import com.synccafe.icafe.purchasing.domain.model.commands.CreatePurchaseOrderCommand;
 import com.synccafe.icafe.purchasing.domain.model.events.PurchaseOrderCreatedEvent;
 import com.synccafe.icafe.purchasing.domain.model.valueobjects.PurchaseOrderStatus;
-import com.synccafe.icafe.purchasing.domain.model.valueobjects.SupplierContact;
 import com.synccafe.icafe.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -21,8 +20,8 @@ public class PurchaseOrder extends AuditableAbstractAggregateRoot<PurchaseOrder>
     @AttributeOverride(name = "branchId", column = @Column(name = "branch_id", nullable = false))
     private BranchId branchId;
     
-    @Embedded
-    private SupplierContact supplierContact;
+    @Column(name = "provider_id", nullable = false)
+    private Long providerId;
     
     @Column(name = "supply_item_id", nullable = false)
     private Long supplyItemId;
@@ -53,11 +52,7 @@ public class PurchaseOrder extends AuditableAbstractAggregateRoot<PurchaseOrder>
 
     public PurchaseOrder(CreatePurchaseOrderCommand command) {
         this.branchId = new BranchId(command.branchId());
-        this.supplierContact = new SupplierContact(
-            command.supplierName(), 
-            command.supplierEmail(), 
-            command.supplierPhone()
-        );
+        this.providerId = command.providerId();
         this.supplyItemId = command.supplyItemId();
         this.unitPrice = new Money(command.unitPrice());
         this.quantity = command.quantity();

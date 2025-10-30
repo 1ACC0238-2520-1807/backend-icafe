@@ -6,9 +6,7 @@ import java.time.LocalDate;
 
 public record CreatePurchaseOrderResource(
     Long branchId,
-    String supplierName,
-    String supplierEmail,
-    String supplierPhone,
+    Long providerId,
     Long supplyItemId,
     Double unitPrice,
     Double quantity,
