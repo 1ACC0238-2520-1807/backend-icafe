@@ -6,7 +6,6 @@ import com.synccafe.icafe.sales.domain.model.commands.CreateSaleItemCommand;
 import com.synccafe.icafe.sales.domain.model.valueobjects.SaleStatus;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -65,7 +64,7 @@ public class SalesContextTest {
     public void testCancelSale() {
         // Arrange
         List<CreateSaleItemCommand> items = List.of(
-            new CreateSaleItemCommand(1L, 1.0, new BigDecimal("10.00"))
+            new CreateSaleItemCommand(1L, 1.0, 10.00)
         );
         
         CreateSaleCommand command = new CreateSaleCommand(1L, 1L, items, "Test");
