@@ -1,28 +1,27 @@
-# Use JDK for both building and running
-FROM eclipse-temurin:17-jdk-alpine
-
-# Establecer directorio de trabajo
+FROM maven:3.9.4-eclipse-temurin-21 AS builder
 WORKDIR /app
 
-# Copiar archivos de Maven
-COPY pom.xml .
-COPY mvnw .
-COPY .mvn .mvn
+# Copiamos todo el proyecto (incluye mvnw y .mvn si existen)
+COPY . .
 
-# Dar permisos de ejecución al wrapper de Maven
-RUN chmod +x ./mvnw
+RUN mvn -B -DskipTests package
 
-# Descargar dependencias (esto se cachea si el pom.xml no cambia)
-RUN ./mvnw dependency:go-offline -B
+FROM eclipse-temurin:21-jre-jammy AS prod
+WORKDIR /app
+COPY --from=builder /app/target/*.jar app.jar
+EXPOSE 8081
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
 
-# Copiar código fuente
-COPY src ./src
+# ---------- STAGE 3: dev (imagen para desarrollo con hot-reload) ----------
+FROM maven:3.9.4-eclipse-temurin-21 AS dev
+WORKDIR /app
 
-# Construir la aplicación
-RUN ./mvnw clean package -DskipTests
+# Copiamos mvnw y .mvn para poder usar el wrapper; copiar todo ayuda si no montas el volumen
+COPY . .
 
-# Exponer puerto 8080 (puerto por defecto de Spring Boot)
-EXPOSE 8080
+RUN chmod +x mvnw
 
-# Comando para ejecutar la aplicación
-CMD ["java", "-jar", "target/iCafe-0.0.1-SNAPSHOT.jar"]
+EXPOSE 8081
+
+# Nota: al usar docker-compose montando el código en /app, los cambios en la fuente se reflejan.
+CMD ["sh", "-c", "if [ -x ./mvnw ] && [ -f ./.mvn/wrapper/maven-wrapper.properties ]; then ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev; else mvn -Dspring-boot.run.profiles=dev spring-boot:run; fi"]
