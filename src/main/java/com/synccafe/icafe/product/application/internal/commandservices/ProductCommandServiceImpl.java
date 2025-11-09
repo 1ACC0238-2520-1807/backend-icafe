@@ -2,147 +2,94 @@ package com.synccafe.icafe.product.application.internal.commandservices;
 
 import com.synccafe.icafe.product.domain.model.aggregates.Product;
 import com.synccafe.icafe.product.domain.model.commands.*;
+import com.synccafe.icafe.product.domain.model.entities.SupplyItem;
 import com.synccafe.icafe.product.domain.model.valueobjects.BranchId;
-import com.synccafe.icafe.product.domain.model.valueobjects.OwnerId;
 import com.synccafe.icafe.product.domain.services.ProductCommandService;
-import com.synccafe.icafe.product.domain.services.ProductPolicy;
 import com.synccafe.icafe.product.infrastructure.persistence.jpa.repositories.ProductRepository;
 import com.synccafe.icafe.product.infrastructure.acl.InventoryACLService;
+import com.synccafe.icafe.product.infrastructure.persistence.jpa.repositories.SupplyItemRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 public class ProductCommandServiceImpl implements ProductCommandService {
 
     private final ProductRepository productRepository;
-    private final ProductPolicy productPolicy;
-    private final InventoryACLService inventoryACLService;
+    private final SupplyItemRepository supplyItemRepository;
 
-    public ProductCommandServiceImpl(ProductRepository productRepository,
-                                   ProductPolicy productPolicy,
-                                   InventoryACLService inventoryACLService) {
+    public ProductCommandServiceImpl(ProductRepository productRepository, SupplyItemRepository supplyItemRepository) {
         this.productRepository = productRepository;
-        this.productPolicy = productPolicy;
-        this.inventoryACLService = inventoryACLService;
+        this.supplyItemRepository = supplyItemRepository;
     }
 
     @Override
-    @Transactional
-    public Long handle(CreateProductCommand command) {
-        var ownerId = new OwnerId(command.ownerId());
-        var branchId = new BranchId(command.branchId());
-        
-        var product = new Product(
-            ownerId,
-            branchId,
-            command.name(),
-            command.category(),
-            command.type(),
-            command.portions(),
-            command.steps()
-        );
-
-        // Set direct item or components based on product type
-        switch (command.type()) {
-            case SIMPLE -> {
-                if (command.directItem() != null) {
-                    product.setDirectItem(command.directItem());
-                }
-            }
-            case COMPOSED -> {
-                if (command.components() != null && !command.components().isEmpty()) {
-                    product.setComponents(command.components());
-                }
-            }
+    public Optional<Product> handle(CreateProductCommand command) {
+        if(productRepository.existsProductsByName(command.name())) {
+            throw new IllegalArgumentException("Product with name " + command.name() + " already exists.");
         }
-
-        // Validate invariants after setting directItem/components
-        product.validateInvariants();
-
-        // Validate business rules after setting directItem/components
-        productPolicy.validateProductCreation(product, inventoryACLService, 
-            new ProductPolicyRepositoryAdapter(productRepository));
-
-        return productRepository.save(product).getId();
-    }
-
-    @Override
-    @Transactional
-    public void handle(UpdateProductCommand command) {
-        var product = productRepository.findById(command.productId())
-            .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
-
-        // Update basic info if provided
-        if (command.name() != null || command.category() != null || command.steps() != null) {
-            product.updateBasicInfo(command.name(), command.category(), command.steps());
-        }
-
-        // Update portions if provided
-        if (command.portions() != null) {
-            product.updatePortions(command.portions());
-        }
-
-        // Update direct item or components based on product type
-        if (command.directItem() != null) {
-            product.setDirectItem(command.directItem());
-        }
-
-        if (command.components() != null) {
-            product.setComponents(command.components());
-        }
-
-        // Validate business rules
-        productPolicy.validateProductUpdate(product, inventoryACLService,
-            new ProductPolicyRepositoryAdapter(productRepository));
-
+        var product = new Product(command);
         productRepository.save(product);
+        return Optional.of(product);
     }
 
     @Override
-    @Transactional
-    public void handle(ArchiveProductCommand command) {
-        var product = productRepository.findById(command.productId())
-            .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
-
-        product.archive();
-        productRepository.save(product);
-    }
-
-    @Override
-    @Transactional
-    public void handle(ActivateProductCommand command) {
-        var product = productRepository.findById(command.productId())
-            .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
-
-        product.activate();
-        productRepository.save(product);
-    }
-
-    @Override
-    @Transactional
-    public void handle(DeleteProductCommand command) {
-        var product = productRepository.findById(command.productId())
-            .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
-
-        product.delete();
-        productRepository.delete(product);
-    }
-
-    // Adapter to bridge ProductPolicy interface with actual repository
-    private static class ProductPolicyRepositoryAdapter implements ProductPolicy.ProductRepository {
-        private final ProductRepository repository;
-
-        public ProductPolicyRepositoryAdapter(ProductRepository repository) {
-            this.repository = repository;
+    public Optional<Product> handle(Long productId, UpdateProductCommand command) {
+        var productOpt = productRepository.findById(productId);
+        if (productOpt.isEmpty()) {
+            throw new IllegalArgumentException("Product with ID " + productId + " does not exist.");
         }
+        var product = productOpt.get();
+        product.updateProduct(command);
+        productRepository.save(product);
+        return Optional.of(product);
+    }
 
-        @Override
-        public boolean existsByNameAndOwnerIdAndBranchIdAndIdNot(String name, OwnerId ownerId, 
-                                                               BranchId branchId, Long excludeId) {
-            if (excludeId == null) {
-                return repository.existsByNameIgnoreCaseAndOwnerIdAndBranchId(name, ownerId, branchId);
-            }
-            return repository.existsByNameIgnoreCaseAndOwnerIdAndBranchIdAndIdNot(name, ownerId, branchId, excludeId);
+
+    @Override
+    public Optional<Product> handle(Long productId,ActivateProductCommand command) {
+        var productOpt = productRepository.findById(productId);
+        if (productOpt.isEmpty()) {
+            throw new IllegalArgumentException("Product with ID " + productId + " does not exist.");
         }
+        var product = productOpt.get();
+        product.activateProductStatus();
+        productRepository.save(product);
+        return Optional.of(product);
+    }
+
+    @Override
+    public Optional<Product> handle(Long productId,ArchiveProductCommand command) {
+        var productOpt = productRepository.findById(productId);
+        if (productOpt.isEmpty()) {
+            throw new IllegalArgumentException("Product with ID " + productId + " does not exist.");
+        }
+        var product = productOpt.get();
+        product.archivedProductStatus();
+        productRepository.save(product);
+        return Optional.of(product);
+    }
+
+    @Override
+    public Optional<Product> handle(AddIngredientCommand command) {
+        var productOpt = productRepository.findById(command.productId());
+        if (productOpt.isEmpty()) {
+            throw new IllegalArgumentException("Product with ID " + command.productId() + " does not exist.");
+        }
+        var product = productOpt.get();
+        SupplyItem supplyItem = supplyItemRepository.findById(command.supplyItemId())
+                .orElseThrow(() -> new IllegalArgumentException("Supply item not found"));
+        product.addIngredient(supplyItem, command.quantity());
+        productRepository.save(product);
+        return Optional.of(product);
+    }
+
+    @Override
+    public void handle(RemoveIngredientCommand command) {
+        var product = productRepository.findById(command.productId())
+                .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+        product.removeIngredient(command);
+        productRepository.save(product);
     }
 }

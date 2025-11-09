@@ -1,10 +1,10 @@
 package com.synccafe.icafe.product.application.internal.queryservices;
 
 import com.synccafe.icafe.product.domain.model.aggregates.Product;
+import com.synccafe.icafe.product.domain.model.queries.GetAllProductsByBranchIdQuery;
 import com.synccafe.icafe.product.domain.model.queries.GetAllProductsQuery;
 import com.synccafe.icafe.product.domain.model.queries.GetProductByIdQuery;
 import com.synccafe.icafe.product.domain.model.valueobjects.BranchId;
-import com.synccafe.icafe.product.domain.model.valueobjects.OwnerId;
 import com.synccafe.icafe.product.domain.services.ProductQueryService;
 import com.synccafe.icafe.product.infrastructure.persistence.jpa.repositories.ProductRepository;
 import org.springframework.stereotype.Service;
@@ -21,6 +21,7 @@ public class ProductQueryServiceImpl implements ProductQueryService {
         this.productRepository = productRepository;
     }
 
+
     @Override
     public Optional<Product> handle(GetProductByIdQuery query) {
         return productRepository.findById(query.productId());
@@ -28,8 +29,13 @@ public class ProductQueryServiceImpl implements ProductQueryService {
 
     @Override
     public List<Product> handle(GetAllProductsQuery query) {
-        var ownerId = new OwnerId(query.ownerId());
-        var branchId = new BranchId(query.branchId());
-        return productRepository.findByOwnerIdAndBranchId(ownerId, branchId);
+        return productRepository.findAll();
+    }
+
+    @Override
+    public List<Product> handle(GetAllProductsByBranchIdQuery query) {
+        return productRepository.findAll().stream()
+                .filter(product -> product.getBranchId().equals(new BranchId(query.branchId())))
+                .toList();
     }
 }
