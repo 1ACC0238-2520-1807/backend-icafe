@@ -9,7 +9,7 @@ RUN mvn -B -DskipTests package
 FROM eclipse-temurin:21-jre-jammy AS prod
 WORKDIR /app
 COPY --from=builder /app/target/*.jar app.jar
-EXPOSE 8081
+EXPOSE 8080
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
 
 # ---------- STAGE 3: dev (imagen para desarrollo con hot-reload) ----------
@@ -21,7 +21,7 @@ COPY . .
 
 RUN chmod +x mvnw
 
-EXPOSE 8081
+EXPOSE 8080
 
 # Nota: al usar docker-compose montando el código en /app, los cambios en la fuente se reflejan.
 CMD ["sh", "-c", "if [ -x ./mvnw ] && [ -f ./.mvn/wrapper/maven-wrapper.properties ]; then ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev; else mvn -Dspring-boot.run.profiles=dev spring-boot:run; fi"]
