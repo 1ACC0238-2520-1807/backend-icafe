@@ -56,10 +56,19 @@ public class PurchaseOrderController {
             return ResponseEntity.status(HttpStatus.CREATED).body(purchaseOrderResource);
         }
         catch (Exception ex) {
-            // Captura de cualquier otro error inesperado
+            // Imprime en consola
             ex.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+
+            // Devuelve el mensaje de error en el body
+            Map<String, String> errorBody = new HashMap<>();
+            errorBody.put("error", ex.getClass().getSimpleName());
+            errorBody.put("message", ex.getMessage());
+
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(errorBody);
         }
+
     }
 
     @GetMapping("/branch/{branchId}")
