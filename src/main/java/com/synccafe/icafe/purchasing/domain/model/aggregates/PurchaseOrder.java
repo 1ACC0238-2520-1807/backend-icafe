@@ -60,8 +60,9 @@ public class PurchaseOrder extends AuditableAbstractAggregateRoot<PurchaseOrder>
         this.expirationDate = command.expirationDate();
         this.status = PurchaseOrderStatus.PENDING;
         this.notes = command.notes();
-        
-        // Registrar evento de dominio
+    }
+
+    public void registerCreatedEvent() {
         this.registerEvent(new PurchaseOrderCreatedEvent(
             this.getId(),
             this.branchId.branchId(),

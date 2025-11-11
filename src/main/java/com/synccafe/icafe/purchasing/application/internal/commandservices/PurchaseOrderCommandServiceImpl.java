@@ -24,10 +24,8 @@ public class PurchaseOrderCommandServiceImpl implements PurchaseOrderCommandServ
     public Optional<PurchaseOrder> handle(CreatePurchaseOrderCommand command) {
         var purchaseOrder = new PurchaseOrder(command);
         var savedPurchaseOrder = purchaseOrderRepository.save(purchaseOrder);
-        
-        // Los eventos de dominio se publican automáticamente por Spring Data JPA
-        // cuando se guarda la entidad que extiende AbstractAggregateRoot
-        
+        savedPurchaseOrder.registerCreatedEvent();
+        purchaseOrderRepository.save(savedPurchaseOrder);
         return Optional.of(savedPurchaseOrder);
     }
 
