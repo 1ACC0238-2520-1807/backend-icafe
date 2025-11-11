@@ -56,17 +56,9 @@ public class PurchaseOrderController {
             return ResponseEntity.status(HttpStatus.CREATED).body(purchaseOrderResource);
         }
         catch (Exception ex) {
-            // Imprime en consola
-            ex.printStackTrace();
-
-            // Devuelve el mensaje de error en el body
-            Map<String, String> errorBody = new HashMap<>();
-            errorBody.put("error", ex.getClass().getSimpleName());
-            errorBody.put("message", ex.getMessage());
-
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(errorBody);
+                    .body(ex.getMessage());
         }
 
     }
