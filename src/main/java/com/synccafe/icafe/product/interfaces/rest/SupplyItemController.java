@@ -85,4 +85,13 @@ public class SupplyItemController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @GetMapping("/{branchId}/branch")
+    public ResponseEntity<List<SupplyItemResource>> getAllSupplyItemsByBranchId(@PathVariable Long branchId) {
+        var supplyItems = supplyItemQueryService.handle(branchId);
+        List<SupplyItemResource> supplyItemResources = supplyItems.stream()
+                .map(SupplyItemResourceFromEntityAssembler::toResourceFromEntity)
+                .toList();
+        return ResponseEntity.ok(supplyItemResources);
+    }
 }

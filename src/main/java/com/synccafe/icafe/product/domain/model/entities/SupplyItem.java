@@ -1,6 +1,6 @@
 package com.synccafe.icafe.product.domain.model.entities;
 
-import com.synccafe.icafe.contacs.domain.model.valueobjects.BranchId;
+import com.synccafe.icafe.product.domain.model.valueobjects.BranchId;
 import com.synccafe.icafe.product.domain.model.commands.CreateSupplyItemCommand;
 import com.synccafe.icafe.product.domain.model.commands.UpdateSupplyItemCommand;
 import com.synccafe.icafe.product.domain.model.events.SupplyItemPriceUpdatedEvent;
