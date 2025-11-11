@@ -43,17 +43,36 @@ public class PurchaseOrderController {
         @ApiResponse(responseCode = "201", description = "Purchase order created successfully"),
         @ApiResponse(responseCode = "400", description = "Invalid input data")
     })
-    public ResponseEntity<PurchaseOrderResource> createPurchaseOrder(@Valid @RequestBody CreatePurchaseOrderResource resource) {
-        var command = CreatePurchaseOrderCommandFromResourceAssembler.toCommandFromResource(resource);
-        var purchaseOrder = purchaseOrderCommandService.handle(command);
-        
-        if (purchaseOrder.isEmpty()) {
-            return ResponseEntity.badRequest().build();
+    @PostMapping("/purchase-orders")
+    public ResponseEntity<PurchaseOrderResource> createPurchaseOrder(
+            @Valid @RequestBody CreatePurchaseOrderResource resource) {
+        try {
+            var command = CreatePurchaseOrderCommandFromResourceAssembler.toCommandFromResource(resource);
+            var purchaseOrder = purchaseOrderCommandService.handle(command);
+
+            if (purchaseOrder.isEmpty()) {
+                return ResponseEntity.badRequest().build();
+            }
+
+            var purchaseOrderResource = purchaseOrderResourceFromEntityAssembler
+                    .toResourceFromEntity(purchaseOrder.get());
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(purchaseOrderResource);
+
+        } catch (MethodArgumentNotValidException ex) {
+            // Captura de errores de validación
+            Map<String, String> errors = new HashMap<>();
+            ex.getBindingResult().getFieldErrors().forEach(error ->
+                errors.put(error.getField(), error.getDefaultMessage())
+            );
+            return ResponseEntity.badRequest().body(null); // o devolver el mapa de errores
+        } catch (Exception ex) {
+            // Captura de cualquier otro error inesperado
+            ex.printStackTrace(); // o usar logger
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-        
-        var purchaseOrderResource = purchaseOrderResourceFromEntityAssembler.toResourceFromEntity(purchaseOrder.get());
-        return ResponseEntity.status(HttpStatus.CREATED).body(purchaseOrderResource);
     }
+
 
     @GetMapping("/branch/{branchId}")
     @Operation(summary = "Get purchase orders by branch", description = "Get all purchase orders for a specific branch")
