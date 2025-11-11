@@ -26,7 +26,7 @@ import java.util.List;
 @RequestMapping("/api/v1/purchase-orders")
 @Tag(name = "Purchase Orders", description = "Purchase order management operations")
 public class PurchaseOrderController {
-
+    private static final Logger log = LoggerFactory.getLogger(PurchaseOrderController.class);
     private final PurchaseOrderCommandService purchaseOrderCommandService;
     private final PurchaseOrderQueryService purchaseOrderQueryService;
     private final PurchaseOrderResourceFromEntityAssembler purchaseOrderResourceFromEntityAssembler;
