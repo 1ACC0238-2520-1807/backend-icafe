@@ -17,6 +17,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -56,11 +58,10 @@ public class PurchaseOrderController {
             return ResponseEntity.status(HttpStatus.CREATED).body(purchaseOrderResource);
         }
         catch (Exception ex) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ex.getMessage());
+            // Captura de cualquier otro error inesperado
+            log.error("Error inesperado al crear la orden de compra", ex);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-
     }
 
     @GetMapping("/branch/{branchId}")
