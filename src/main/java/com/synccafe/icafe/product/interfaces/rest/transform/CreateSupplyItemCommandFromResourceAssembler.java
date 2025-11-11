@@ -7,7 +7,7 @@ public class CreateSupplyItemCommandFromResourceAssembler {
     public static CreateSupplyItemCommand toCommandFromResource(CreateSupplyItemResource resource) {
         return new CreateSupplyItemCommand(
                 resource.providerId(),
-                resource.providerId(),
+                resource.branchId(),
                 resource.name(),
                 resource.unit(),
                 resource.unitPrice(),
