@@ -10,4 +10,5 @@ import java.util.List;
 @Repository
 public interface StockMovementRepository extends JpaRepository<StockMovement, Long> {
     List<StockMovement> findBySupplyItemIdAndBranchIdOrderByMovementDateDesc(Long supplyItemId, BranchId branchId);
+    List<StockMovement> findAllByBranchId(Long branchId);
 }
