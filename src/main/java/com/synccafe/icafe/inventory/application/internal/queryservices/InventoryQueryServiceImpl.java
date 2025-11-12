@@ -6,6 +6,7 @@ import com.synccafe.icafe.inventory.domain.model.queries.GetStockMovementsByBran
 import com.synccafe.icafe.inventory.domain.services.InventoryQueryService;
 import com.synccafe.icafe.inventory.infrastructure.persistence.jpa.repositories.ProductStockRepository;
 import com.synccafe.icafe.inventory.infrastructure.persistence.jpa.repositories.StockMovementRepository;
+import com.synccafe.icafe.product.domain.model.valueobjects.BranchId;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,6 +31,6 @@ public class InventoryQueryServiceImpl implements InventoryQueryService {
 
     @Override
     public List<StockMovement> handle(GetStockMovementsByBranchQuery query) {
-        return stockMovementRepository.findAllByBranchId(query.branchId());
+        return stockMovementRepository.findAllByBranchId(new BranchId(query.branchId()));
     }
 }

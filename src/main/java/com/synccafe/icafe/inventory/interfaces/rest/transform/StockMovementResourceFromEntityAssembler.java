@@ -8,7 +8,7 @@ public class StockMovementResourceFromEntityAssembler {
         return new StockMovementResource(
             entity.getId(),
             entity.getSupplyItemId(),
-            entity.getBranchId(),
+            entity.getBranchId().branchId(),
             entity.getType(),
             entity.getQuantity(),
             entity.getOrigin(),
